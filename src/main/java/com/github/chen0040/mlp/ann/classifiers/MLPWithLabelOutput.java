@@ -10,14 +10,14 @@ import java.util.function.Supplier;
 
 
 /**
- * Created by memeanalytics on 5/9/15.
+ * Created by xschen on 5/9/15.
  */
 public class MLPWithLabelOutput extends MLP {
     public Supplier<List<String>> classLabelsModel;
 
     @Override
     public boolean isValidTrainingSample(DataRow tuple){
-        return !tuple.getCategoricalColumnNames().isEmpty();
+        return !tuple.getCategoricalTargetColumnNames().isEmpty();
     }
 
     @Override

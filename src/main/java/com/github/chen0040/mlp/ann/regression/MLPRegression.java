@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * Created by memeanalytics on 21/8/15.
+ * Created by xschen on 21/8/15.
  */
 public class MLPRegression {
     private MLPWithNumericOutput mlp;

@@ -6,7 +6,7 @@ import com.github.chen0040.mlp.ann.MLP;
 
 
 /**
- * Created by memeanalytics on 5/9/15.
+ * Created by xschen on 5/9/15.
  */
 public class MLPWithNumericOutput extends MLP {
 

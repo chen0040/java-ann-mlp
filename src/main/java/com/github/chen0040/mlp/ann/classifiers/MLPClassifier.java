@@ -4,20 +4,19 @@ import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
- * Created by memeanalytics on 21/8/15.
+ * Created by xschen on 21/8/15.
  */
 public class MLPClassifier implements Cloneable {
     private MLPWithLabelOutput mlp;
 
-    private final Logger logger = Logger.getLogger(String.valueOf(MLPClassifier.class));
+    private final Logger logger = LoggerFactory.getLogger(MLPClassifier.class);
 
 
     public static final String HIDDEN_LAYER1 = "hiddenLayer1";
@@ -115,7 +114,7 @@ public class MLPClassifier implements Cloneable {
         }
 
         if(selected_index==-1){
-            logger.log(Level.SEVERE, "predict failed due to label not found");
+            logger.error("predict failed due to label not found");
         }
 
         return getClassLabels().get(selected_index);
@@ -123,10 +122,10 @@ public class MLPClassifier implements Cloneable {
 
     private void scan4ClassLabels(DataFrame batch){
         int m = batch.rowCount();
-        HashSet<String> set = new HashSet<>();
+        Set<String> set = new HashSet<>();
         for(int i=0; i < m; ++i){
             DataRow tuple = batch.row(i);
-            if(!tuple.getCategoricalColumnNames().isEmpty()) {
+            if(!tuple.getCategoricalTargetColumnNames().isEmpty()) {
                 set.add(tuple.categoricalTarget());
             }
         }
@@ -160,6 +159,8 @@ public class MLPClassifier implements Cloneable {
         if (getClassLabels().isEmpty()) {
             scan4ClassLabels(batch);
         }
+
+        logger.info("class labels: {}", classLabels.size());
 
         mlp = new MLPWithLabelOutput();
         mlp.classLabelsModel = () -> getClassLabels();
