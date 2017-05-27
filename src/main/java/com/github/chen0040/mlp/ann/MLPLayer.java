@@ -37,7 +37,7 @@ public class MLPLayer implements Cloneable {
 
     public MLPLayer(int neuron_count)
 	{
-        neurons = new ArrayList<MLPNeuron>();
+        neurons = new ArrayList<>();
 		for(int i=0; i<neuron_count; i++)
 		{
 			neurons.add(new MLPNeuron());

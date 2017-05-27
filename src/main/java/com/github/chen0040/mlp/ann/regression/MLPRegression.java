@@ -2,6 +2,8 @@ package com.github.chen0040.mlp.ann.regression;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,9 +14,15 @@ import java.util.List;
  */
 public class MLPRegression {
     private MLPWithNumericOutput mlp;
-    private int epoches;
+
+    @Getter
+    @Setter
+    private int epoches = 1000;
     private List<Integer> hiddenLayers;
-    private double learningRate;
+
+    @Getter
+    @Setter
+    private double learningRate = 0.2;
 
     public void copy(MLPRegression that) throws CloneNotSupportedException {
         mlp = that.mlp == null ? null : (MLPWithNumericOutput)that.mlp.clone();
@@ -46,30 +54,14 @@ public class MLPRegression {
     }
 
     public void setHiddenLayers(int... hiddenLayers) {
-        this.hiddenLayers = new ArrayList<Integer>();
+        this.hiddenLayers = new ArrayList<>();
         for(int hiddenLayerNeuronCount : hiddenLayers){
             this.hiddenLayers.add(hiddenLayerNeuronCount);
         }
     }
 
-    public double getLearningRate() {
-        return learningRate;
-    }
-
-    public void setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
-    }
-
-    public int getEpoches() {
-        return epoches;
-    }
-
-    public void setEpoches(int epoches) {
-        this.epoches = epoches;
-    }
-
     public double transform(DataRow tuple) {
-        double[] target = mlp.predict(tuple.toArray());
+        double[] target = mlp.transform(tuple);
         return target[0];
     }
 

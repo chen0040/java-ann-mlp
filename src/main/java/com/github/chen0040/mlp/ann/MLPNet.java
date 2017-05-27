@@ -3,6 +3,8 @@ package com.github.chen0040.mlp.ann;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,8 @@ public class MLPNet implements  Cloneable {
 	protected MLPLayer outputLayer =null;
 
 	protected List<MLPLayer> hiddenLayers;
+
+	private static final Logger logger = LoggerFactory.getLogger(MLPNet.class);
 
 	@Getter
 	@Setter
@@ -131,7 +135,7 @@ public class MLPNet implements  Cloneable {
 		return get_target_error(target);
 	}
 	
-	public double[] predict(double[] input)
+	public double[] transform(double[] input)
 	{
 		double[] propagated_output = inputLayer.setOutput(input);
 		for(int i=0; i < hiddenLayers.size(); ++i) {

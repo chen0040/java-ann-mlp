@@ -49,8 +49,9 @@ public class MLPClassifierUnitTest {
       }
       dataFrame.lock();
 
-      MLPClassifier svc = new MLPClassifier();
-      svc.fit(dataFrame);
+      MLPClassifier mlpClassifier = new MLPClassifier();
+      mlpClassifier.setHiddenLayers(6); // one hidden layer, to set two or more hidden layer call mlpClassifier.setHiddenLayer([layer1NeuronCunt], [layer2NeuronCunt], ...);
+      mlpClassifier.fit(dataFrame);
 
       int correctnessCount = 0;
       for(int i = 0; i < dataFrame.rowCount(); ++i){
@@ -58,7 +59,7 @@ public class MLPClassifierUnitTest {
 
 
 
-         String predicted_label = svc.classify(row);
+         String predicted_label = mlpClassifier.classify(row);
          correctnessCount += (predicted_label.equals(row.categoricalTarget()) ? 1 : 0);
 
          if(i < 10) {

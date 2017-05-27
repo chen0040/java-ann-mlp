@@ -46,7 +46,7 @@ public abstract class MLP extends MLPNet {
 
 
         if(normalizeOutputs) {
-            List<double[]> targets = new ArrayList<double[]>();
+            List<double[]> targets = new ArrayList<>();
             for(int i = 0; i < batch.rowCount(); ++i){
                 DataRow tuple = batch.row(i);
                 if(isValidTrainingSample(tuple)) {
@@ -57,9 +57,10 @@ public abstract class MLP extends MLPNet {
             outputNormalization = new Standardization(targets);
         }
 
-        for(int count=0; count<training_epoches; ++count)
+
+        for(int epoch=0; epoch < training_epoches; ++epoch)
         {
-            for(int i = 0; i<batch.rowCount(); i++)
+            for(int i = 0; i < batch.rowCount(); i++)
             {
                 DataRow row = batch.row(i);
                 if(isValidTrainingSample(row)) {
@@ -75,15 +76,16 @@ public abstract class MLP extends MLPNet {
                     train(x, target);
                 }
             }
+
         }
     }
 
-    public double[] predict(DataFrame context, DataRow tuple){
+    public double[] transform(DataRow tuple){
 
         double[] x = tuple.toArray();
         x = inputNormalization.standardize(x);
 
-        double[] target = predict(x);
+        double[] target = transform(x);
 
         if(outputNormalization != null){
             target = outputNormalization.revert(target);

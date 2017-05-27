@@ -101,7 +101,7 @@ public class MLPClassifier implements Cloneable {
     }
 
     public String classify(DataRow tuple) {
-        double[] target = mlp.predict(tuple.toArray());
+        double[] target = mlp.transform(tuple.toArray());
 
         int selected_index = -1;
         double maxValue = Double.NEGATIVE_INFINITY;
@@ -114,7 +114,7 @@ public class MLPClassifier implements Cloneable {
         }
 
         if(selected_index==-1){
-            logger.error("predict failed due to label not found");
+            logger.error("transform failed due to label not found");
         }
 
         return getClassLabels().get(selected_index);
