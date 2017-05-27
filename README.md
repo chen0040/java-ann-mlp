@@ -1,8 +1,61 @@
 # java-ann-mlp
 Package provides java implementation of multi-layer perceptron neural network with back-propagation learning algorithm 
 
+# Install
+
+Add the following dependency to your POM file:
+
+```xml
+<dependency>
+  <groupId>com.github.chen0040</groupId>
+  <artifactId>java-ann-mlp</artifactId>
+  <version>1.0.1</version>
+</dependency>
+```
 
 # Usage
+
+### MLP Regression
+
+The training of mlp regression is done by calling:
+
+```java
+mlpRegression.fit(trainingData);
+```
+
+The regression of mlp is done by calling:
+
+```java
+double predicted = mlpRegression.transform(dataRow);
+```
+
+The sample code below shows how to use the MLP regression to predict the (-1, +1) numerical output of the heart-scale sample from libsvm.
+
+The training data is loaded from a data frame connected to the "heart_scale" libsvm file (please refer to [here](https://github.com/chen0040/java-data-frame) for more example on how to create a data frame).
+ 
+```java
+InputStream inputStream = new FileInputStream("heart_scale");
+
+DataFrame dataFrame = DataQuery.libsvm().from(inputStream).build();
+
+System.out.println(dataFrame.head(10));
+
+TupleTwo<DataFrame, DataFrame> miniFrames = dataFrame.shuffle().split(0.9);
+
+DataFrame trainingData = miniFrames._1();
+DataFrame crossValidationData = miniFrames._2();
+
+MLPRegression regression = new MLPRegression();
+regression.setHiddenLayers(8);
+regression.setEpoches(1000);
+regression.fit(trainingData);
+
+for(int i = 0; i < crossValidationData.rowCount(); ++i){
+ double predicted = regression.transform(crossValidationData.row(i));
+ double actual = crossValidationData.row(i).target();
+ logger.info("predicted: {}\texpected: {}", predicted, actual);
+}
+```
 
 ### MLP Multi-Class Classifier
 The training of mlp classifier is done by calling:
@@ -20,7 +73,8 @@ String predicted = mlpClassifier.classify(dataRow);
 The sample code below shows how to use the MLP classifier to predict the labels of the heart-scale sample from libsvm.
 
 The training data is loaded from a data frame connected to the "heart_scale" libsvm file (please refer to [here](https://github.com/chen0040/java-data-frame) for more example on how to create a data frame).
- 
+
+As the heart-scale data frame has (-1, +1) numerical output, the codes first coverts the (-1, +1) as categorical output label "category-label".
 ```java
 InputStream inputStream = new FileInputStream("heart_scale");
 
