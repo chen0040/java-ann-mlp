@@ -5,4 +5,6 @@ package com.github.chen0040.mlp.functions;
  */
 public interface TransferFunction extends Cloneable {
     double calculate(double x);
+
+    double gradient(double hx, double y);
 }

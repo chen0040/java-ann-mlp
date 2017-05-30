@@ -2,6 +2,8 @@ package com.github.chen0040.mlp.ann.regression;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import com.github.chen0040.mlp.functions.LogSig;
+import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -70,14 +72,18 @@ public class MLPRegression {
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
 
+        TransferFunction transferFunction = new LogSig();
+
+
         int dimension = batch.row(0).toArray().length;
 
         mlp.setLearningRate(learningRate);
         mlp.createInputLayer(dimension);
         for (int hiddenLayerNeuronCount : hiddenLayers){
-            mlp.addHiddenLayer(hiddenLayerNeuronCount);
+            mlp.addHiddenLayer(hiddenLayerNeuronCount, transferFunction);
         }
         mlp.createOutputLayer(1);
+        mlp.outputLayer.setTransfer(transferFunction);
 
         mlp.train(batch, epoches);
     }

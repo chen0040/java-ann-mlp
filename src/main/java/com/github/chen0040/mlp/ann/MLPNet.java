@@ -13,7 +13,7 @@ import java.util.List;
 //default network assumes input and output are in the range of [0, 1]
 public class MLPNet implements  Cloneable {
 	protected MLPLayer inputLayer =null;
-	protected MLPLayer outputLayer =null;
+	public MLPLayer outputLayer =null;
 
 	protected List<MLPLayer> hiddenLayers;
 
@@ -23,9 +23,6 @@ public class MLPNet implements  Cloneable {
 	@Setter
 	protected double learningRate =0.25; //learning rate
 
-	@Getter
-	@Setter
-	protected double momentum =0.9; //momentum term for \Delta w[i][j]
 
 	public void copy(MLPNet rhs) throws CloneNotSupportedException {
 		inputLayer = rhs.inputLayer == null ? null : (MLPLayer)rhs.inputLayer.clone();
@@ -37,7 +34,6 @@ public class MLPNet implements  Cloneable {
 		}
 
 		learningRate = rhs.learningRate;
-		momentum = rhs.momentum;
 	}
 
 	public MLPLayer createInputLayer(int dimension){
@@ -55,7 +51,7 @@ public class MLPNet implements  Cloneable {
 	
 	public MLPNet()
 	{
-		hiddenLayers = new ArrayList<MLPLayer>();
+		hiddenLayers = new ArrayList<>();
 	}
 
 
@@ -81,8 +77,10 @@ public class MLPNet implements  Cloneable {
 			propagated_output = hiddenLayers.get(i).forward_propagate(propagated_output);
 		}
 		propagated_output = outputLayer.forward_propagate(propagated_output);
-		
+
+
 		double error = get_target_error(target);
+
 		
 		//backward propagate
 		double[] propagated_error = outputLayer.back_propagate(minus(target, propagated_output));
@@ -93,10 +91,10 @@ public class MLPNet implements  Cloneable {
 		//adjust weights
 		double[] input2 = inputLayer.output();
 		for(int i = 0; i < hiddenLayers.size(); ++i){
-			hiddenLayers.get(i).adjust_weights(input2, getLearningRate(), getMomentum());
+			hiddenLayers.get(i).adjust_weights(input2, getLearningRate());
 			input2 = hiddenLayers.get(i).output();
 		}
-		outputLayer.adjust_weights(input2, getLearningRate(), getMomentum());
+		outputLayer.adjust_weights(input2, getLearningRate());
 
 		
 		return error; 
@@ -109,6 +107,7 @@ public class MLPNet implements  Cloneable {
 		}
 		return c;
 	}
+
 	
 	protected double get_target_error(double[] target)
 	{
@@ -122,17 +121,6 @@ public class MLPNet implements  Cloneable {
 		}
 		
 		return t_error;
-	}
-	
-	public double test(double[] input, double[] target)
-	{
-		double[] propagated_output = inputLayer.setOutput(input);
-		for(int i=0; i < hiddenLayers.size(); ++i) {
-			propagated_output = hiddenLayers.get(i).forward_propagate(propagated_output);
-		}
-		propagated_output = outputLayer.forward_propagate(propagated_output);
-		
-		return get_target_error(target);
 	}
 	
 	public double[] transform(double[] input)

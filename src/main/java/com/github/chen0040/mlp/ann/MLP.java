@@ -1,7 +1,9 @@
 package com.github.chen0040.mlp.ann;
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import com.github.chen0040.data.utils.Scaler;
 import com.github.chen0040.data.utils.transforms.Standardization;
+import com.github.chen0040.mlp.functions.RangeScaler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +14,7 @@ import java.util.List;
  */
 public abstract class MLP extends MLPNet {
     private Standardization inputNormalization;
-    private Standardization outputNormalization;
+    private RangeScaler outputNormalization;
 
     private boolean normalizeOutputs;
 
@@ -22,7 +24,7 @@ public abstract class MLP extends MLPNet {
 
         MLP rhs2 = (MLP)rhs;
         inputNormalization = rhs2.inputNormalization == null ? null : (Standardization)rhs2.inputNormalization.clone();
-        outputNormalization = rhs2.outputNormalization == null ? null : (Standardization)rhs2.outputNormalization.clone();
+        outputNormalization = rhs2.outputNormalization == null ? null : (RangeScaler) rhs2.outputNormalization.clone();
         normalizeOutputs = rhs2.normalizeOutputs;
     }
 
@@ -54,7 +56,7 @@ public abstract class MLP extends MLPNet {
                     targets.add(target);
                 }
             }
-            outputNormalization = new Standardization(targets);
+            outputNormalization = new RangeScaler(targets);
         }
 
 

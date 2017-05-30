@@ -6,11 +6,13 @@ import java.util.Random;
 
 
 public class MLPNeuron implements Cloneable {
-	public double bias_weight = 0;
-	public double bias = 0;
+	double bias_weight = 0;
+	private double bias = 0;
 
-	public double output = 0;
-	public double error = 0;
+	double output = 0;
+	double error = 0;
+
+	double[] values = null;
 
 	private static Random rand = new Random();
 
@@ -48,19 +50,9 @@ public class MLPNeuron implements Cloneable {
         if(weights.containsKey(index)){
             return weights.get(index);
         }else{
-            double weight = rand.nextDouble() - 0.5;
+            double weight = (rand.nextDouble() - 0.5) / 10;
             weights.put(index, weight);
             return weight;
-        }
-    }
-
-    public double getWeightDelta(int index){
-        if(weightDeltas.containsKey(index)){
-            return weightDeltas.get(index);
-        }else{
-            double dweight = rand.nextDouble() - 0.5;
-            weightDeltas.put(index, dweight);
-            return dweight;
         }
     }
 
@@ -77,12 +69,13 @@ public class MLPNeuron implements Cloneable {
 		bias_weight =rand.nextDouble()-0.5;
 		bias =-1;
 
-        weights = new HashMap<Integer, Double>();
-        weightDeltas = new HashMap<Integer, Double>();
+        weights = new HashMap<>();
+        weightDeltas = new HashMap<>();
 	}
 	
-	public double getValue(double[] x)
+	double getValue(double[] x)
 	{
+	   values = x;
 		double sum=0;
 
 		for(int i=0; i < x.length; i++)

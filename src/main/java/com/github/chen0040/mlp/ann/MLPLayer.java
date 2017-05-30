@@ -6,14 +6,13 @@ import com.github.chen0040.mlp.functions.LogSig;
 import com.github.chen0040.mlp.functions.TransferFunction;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 
 //default network assumes input and output are in the range of [0, 1]
 public class MLPLayer implements Cloneable {
-	private static Random rand = new Random();
 	private TransferFunction transfer = new LogSig();
-    private ArrayList<MLPNeuron> neurons;
+    private List<MLPNeuron> neurons;
 
     public void copy(MLPLayer rhs){
         transfer = rhs.transfer == null ? null : (TransferFunction) ((AbstractTransferFunction)rhs.transfer).clone();
@@ -69,7 +68,7 @@ public class MLPLayer implements Cloneable {
         this.transfer = transfer;
     }
 
-    public ArrayList<MLPNeuron> getNeurons() {
+    public List<MLPNeuron> getNeurons() {
         return neurons;
     }
 
@@ -90,7 +89,7 @@ public class MLPLayer implements Cloneable {
         return output;
 	}
 	
-	protected void adjust_weights(double[] input, double learningRate, double momentum)
+	protected void adjust_weights(double[] input, double learningRate)
 	{
         for(int j=0; j< neurons.size(); j++)
         {
@@ -99,13 +98,12 @@ public class MLPLayer implements Cloneable {
             for(int i=0; i < dimension; ++i) {
 
                 double sink_error = neuron.error;
-                double dWeight = neuron.getWeightDelta(i);
+
                 double weight = neuron.getWeight(i);
 
                 double dw = learningRate * sink_error * input[i];
-                weight += (dw + momentum * dWeight);
-                dWeight = dw;
-                neuron.setWeightDelta(i, dWeight);
+                weight += dw;
+                neuron.setWeightDelta(i, dw);
                 neuron.setWeight(i, weight);
             }
         }
@@ -130,7 +128,10 @@ public class MLPLayer implements Cloneable {
         {
             MLPNeuron neuron= neurons.get(i);
             double y = neuron.output;
-            neuron.error = y * (1-y) * error[i];
+            double[] values = neuron.values;
+            double hx = neuron.getValue(values);
+
+            neuron.error = transfer.gradient(hx, y) * error[i];
         }
 
         int k = dimension();
@@ -149,4 +150,6 @@ public class MLPLayer implements Cloneable {
 
         return propagated_error;
 	}
+
+
 }
