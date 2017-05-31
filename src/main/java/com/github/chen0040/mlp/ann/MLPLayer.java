@@ -2,7 +2,7 @@ package com.github.chen0040.mlp.ann;
 
 
 import com.github.chen0040.mlp.functions.AbstractTransferFunction;
-import com.github.chen0040.mlp.functions.LogSig;
+import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import java.util.List;
 
 //default network assumes input and output are in the range of [0, 1]
 public class MLPLayer implements Cloneable {
-	private TransferFunction transfer = new LogSig();
+	private TransferFunction transfer = new Sigmoid();
     private List<MLPNeuron> neurons;
 
     public void copy(MLPLayer rhs){

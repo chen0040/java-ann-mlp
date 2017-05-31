@@ -2,7 +2,8 @@ package com.github.chen0040.mlp.ann.regression;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
-import com.github.chen0040.mlp.functions.LogSig;
+import com.github.chen0040.mlp.functions.RectifiedLinear;
+import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
 import lombok.Setter;
@@ -72,7 +73,7 @@ public class MLPRegression {
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
 
-        TransferFunction transferFunction = new LogSig();
+        TransferFunction transferFunction = new Sigmoid();
 
 
         int dimension = batch.row(0).toArray().length;

@@ -2,7 +2,7 @@ package com.github.chen0040.mlp.functions;
 
 
 
-public class LogSig extends AbstractTransferFunction
+public class Sigmoid extends AbstractTransferFunction
 {
 	@Override
 	public double calculate(double x)
@@ -19,6 +19,6 @@ public class LogSig extends AbstractTransferFunction
 
 	@Override
 	public Object clone(){
-		return new LogSig();
+		return new Sigmoid();
 	}
 }
