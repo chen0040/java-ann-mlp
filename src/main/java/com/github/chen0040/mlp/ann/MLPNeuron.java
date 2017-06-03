@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 
-public class MLPNeuron implements Cloneable {
+public class MLPNeuron {
 	double bias_weight = 0;
 	private double bias = 0;
 

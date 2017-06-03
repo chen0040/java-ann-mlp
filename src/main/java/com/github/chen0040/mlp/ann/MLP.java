@@ -18,16 +18,6 @@ public abstract class MLP extends MLPNet {
 
     private boolean normalizeOutputs;
 
-
-    public void copy(MLPNet rhs) throws CloneNotSupportedException {
-        super.copy(rhs);
-
-        MLP rhs2 = (MLP)rhs;
-        inputNormalization = rhs2.inputNormalization == null ? null : (Standardization)rhs2.inputNormalization.clone();
-        outputNormalization = rhs2.outputNormalization == null ? null : (RangeScaler) rhs2.outputNormalization.clone();
-        normalizeOutputs = rhs2.normalizeOutputs;
-    }
-
     public MLP(){
         super();
         normalizeOutputs = false;

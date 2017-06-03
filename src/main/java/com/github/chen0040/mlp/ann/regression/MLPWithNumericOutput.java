@@ -21,12 +21,4 @@ public class MLPWithNumericOutput extends MLP {
         target[0] = tuple.target();
         return target;
     }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        MLPWithNumericOutput clone = (MLPWithNumericOutput)super.clone();
-        clone.copy(this);
-
-        return clone;
-    }
 }

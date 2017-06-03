@@ -11,7 +11,7 @@ import java.util.List;
 
 
 //default network assumes input and output are in the range of [0, 1]
-public class MLPNet implements  Cloneable {
+public class MLPNet {
 	protected MLPLayer inputLayer =null;
 	public MLPLayer outputLayer =null;
 
@@ -24,17 +24,6 @@ public class MLPNet implements  Cloneable {
 	protected double learningRate =0.25; //learning rate
 
 
-	public void copy(MLPNet rhs) throws CloneNotSupportedException {
-		inputLayer = rhs.inputLayer == null ? null : (MLPLayer)rhs.inputLayer.clone();
-		outputLayer = rhs.outputLayer == null ? null : (MLPLayer)rhs.outputLayer.clone();
-		hiddenLayers.clear();
-
-		for(int i=0; i < rhs.hiddenLayers.size(); ++i){
-			hiddenLayers.add((MLPLayer)rhs.hiddenLayers.get(i).clone());
-		}
-
-		learningRate = rhs.learningRate;
-	}
 
 	public MLPLayer createInputLayer(int dimension){
 		inputLayer = new MLPLayer(dimension);

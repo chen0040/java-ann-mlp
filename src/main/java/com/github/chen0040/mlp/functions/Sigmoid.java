@@ -15,10 +15,4 @@ public class Sigmoid extends AbstractTransferFunction
 		y = calculate(hx);
 		return y * (1-y);
 	}
-
-
-	@Override
-	public Object clone(){
-		return new Sigmoid();
-	}
 }

@@ -10,33 +10,12 @@ import java.util.List;
 
 
 //default network assumes input and output are in the range of [0, 1]
-public class MLPLayer implements Cloneable {
+public class MLPLayer {
 	private TransferFunction transfer = new Sigmoid();
-    private List<MLPNeuron> neurons;
-
-    public void copy(MLPLayer rhs){
-        transfer = rhs.transfer == null ? null : (TransferFunction) ((AbstractTransferFunction)rhs.transfer).clone();
-        neurons.clear();
-        for(int i=0; i < rhs.neurons.size(); ++i){
-            neurons.add((MLPNeuron)rhs.neurons.get(i).clone());
-        }
-    }
-
-    @Override
-    public Object clone(){
-        MLPLayer clone = new MLPLayer();
-        clone.copy(this);
-
-        return clone;
-    }
-
-    public MLPLayer(){
-        neurons = new ArrayList<MLPNeuron>();
-    }
+    private final List<MLPNeuron> neurons = new ArrayList<>();
 
     public MLPLayer(int neuron_count)
 	{
-        neurons = new ArrayList<>();
 		for(int i=0; i<neuron_count; i++)
 		{
 			neurons.add(new MLPNeuron());
@@ -60,22 +39,10 @@ public class MLPLayer implements Cloneable {
         return output.clone();
     }
 
-    public TransferFunction getTransfer() {
-        return transfer;
-    }
-
     public void setTransfer(TransferFunction transfer) {
         this.transfer = transfer;
     }
 
-    public List<MLPNeuron> getNeurons() {
-        return neurons;
-    }
-
-    public void setNeurons(ArrayList<MLPNeuron> neurons) {
-        this.neurons = neurons;
-    }
-	
 	public double[] forward_propagate(double[] input)
 	{
         double[] output = new double[neurons.size()];

@@ -30,18 +30,4 @@ public class MLPWithLabelOutput extends MLP {
         return target;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        MLPWithLabelOutput clone = (MLPWithLabelOutput)super.clone();
-        clone.copy(this);
-        return clone;
-    }
-
-    @Override
-    public void copy(MLPNet rhs) throws CloneNotSupportedException {
-        super.copy(rhs);
-
-        MLPWithLabelOutput rhs2 = (MLPWithLabelOutput)rhs;
-        classLabelsModel = rhs2.classLabelsModel;
-    }
 }

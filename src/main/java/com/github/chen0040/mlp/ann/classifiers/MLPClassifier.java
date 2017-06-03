@@ -13,7 +13,7 @@ import java.util.*;
 /**
  * Created by xschen on 21/8/15.
  */
-public class MLPClassifier implements Cloneable {
+public class MLPClassifier {
     private MLPWithLabelOutput mlp;
 
     private final Logger logger = LoggerFactory.getLogger(MLPClassifier.class);
@@ -39,23 +39,8 @@ public class MLPClassifier implements Cloneable {
 
     private Map<String, Integer> hiddenLayer = new HashMap<>();
 
-    public void copy(MLPClassifier rhs2) throws CloneNotSupportedException {
-        mlp = rhs2.mlp == null ? null : (MLPWithLabelOutput)rhs2.mlp.clone();
-        if(mlp != null){
-            mlp.classLabelsModel = this::getClassLabels;
-        }
-    }
-
     public List<String> getClassLabels(){
         return classLabels;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        MLPClassifier clone = (MLPClassifier)super.clone();
-        clone.copy(this);
-
-        return clone;
     }
 
     public MLPClassifier(){

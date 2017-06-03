@@ -25,24 +25,11 @@ public class MLPRegression {
 
     @Getter
     @Setter
+    private TransferFunction transferFunction = new Sigmoid();
+
+    @Getter
+    @Setter
     private double learningRate = 0.2;
-
-    public void copy(MLPRegression that) throws CloneNotSupportedException {
-        mlp = that.mlp == null ? null : (MLPWithNumericOutput)that.mlp.clone();
-        epoches = that.epoches;
-        hiddenLayers.clear();
-        for(int i=0; i < that.hiddenLayers.size(); ++i){
-            hiddenLayers.add(that.hiddenLayers.get(i));
-        }
-        learningRate = that.learningRate;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        MLPRegression clone = (MLPRegression)super.clone();
-        clone.copy(this);
-        return clone;
-    }
 
     public MLPRegression(){
         epoches = 1000;
@@ -73,7 +60,7 @@ public class MLPRegression {
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
 
-        TransferFunction transferFunction = new Sigmoid();
+
 
 
         int dimension = batch.row(0).toArray().length;
