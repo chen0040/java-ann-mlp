@@ -5,9 +5,9 @@ package com.github.chen0040.mlp.functions;
 public class Sigmoid extends AbstractTransferFunction
 {
 	@Override
-	public double calculate(double x)
+	public double calculate(double z)
 	{
-		return 1/(Math.exp(-x)+1);
+		return 1/(Math.exp(-z)+1);
 	}
 
 

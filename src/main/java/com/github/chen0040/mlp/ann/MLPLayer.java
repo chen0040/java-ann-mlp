@@ -1,7 +1,6 @@
 package com.github.chen0040.mlp.ann;
 
 
-import com.github.chen0040.mlp.functions.AbstractTransferFunction;
 import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 
@@ -64,18 +63,19 @@ public class MLPLayer {
 	{
         for(int j=0; j< neurons.size(); j++)
         {
-            MLPNeuron neuron = neurons.get(j);
-            int dimension = neuron.dimension();
+            MLPNeuron neuron_j = neurons.get(j);
+            int dimension = neuron_j.dimension();
             for(int i=0; i < dimension; ++i) {
 
-                double sink_error = neuron.error;
+                double dE_dzj = neuron_j.dE_dzj;
 
-                double weight = neuron.getWeight(i);
+                double w_ji = neuron_j.getWeight(i);
 
-                double dw = learningRate * sink_error * neuron.values[i];
-                weight += dw;
-                neuron.setWeightDelta(i, dw);
-                neuron.setWeight(i, weight);
+                double yi = neuron_j.values[i];
+                double dw = learningRate * dE_dzj * yi;
+                w_ji += dw;
+                neuron_j.setWeightDelta(i, dw);
+                neuron_j.setWeight(i, w_ji);
             }
         }
 
@@ -83,8 +83,8 @@ public class MLPLayer {
         {
             MLPNeuron neuron = neurons.get(j);
             double sink_w0 = neuron.bias_weight;
-            double sink_error = neuron.error;
-            sink_w0 += learningRate * sink_error;
+            double dE_dzj = neuron.dE_dzj;
+            sink_w0 += learningRate * dE_dzj;
             neuron.bias_weight = sink_w0;
         }
 	}
@@ -93,33 +93,31 @@ public class MLPLayer {
         return neurons.get(0).dimension();
     }
 	
-	public double[] back_propagate(double[] error)
+	public double[] back_propagate(double[] dE_dyj)
 	{
         for(int i=0; i< neurons.size(); i++)
         {
             MLPNeuron neuron= neurons.get(i);
-            double y = neuron.output;
             double[] values = neuron.values;
-            double hx = neuron.getValue(values);
-
-            neuron.error = transfer.gradient(hx) * error[i];
+            double zj = neuron.getValue(values);
+            neuron.dE_dzj = transfer.gradient(zj) * dE_dyj[i];
         }
 
-        int k = dimension();
-        double[] propagated_error = new double[k];
-        for(int i = 0; i < k; ++i) {
+        int dimension = dimension();
+        double[] dE_dyi = new double[dimension];
+        for(int i = 0; i < dimension; ++i) {
             double error_sum = 0;
 
             for (int j = 0; j < neurons.size(); j++) {
                 MLPNeuron neuron = neurons.get(j);
-                double weight = neuron.getWeight(i);
-                double sink_error = neuron.error;
-                error_sum += (weight * sink_error);
+                double w_ji = neuron.getWeight(i);
+                double dE_dzj = neuron.dE_dzj;
+                error_sum += (w_ji * dE_dzj);
             }
-            propagated_error[i] = error_sum;
+            dE_dyi[i] = error_sum;
         }
 
-        return propagated_error;
+        return dE_dyi;
 	}
 
 

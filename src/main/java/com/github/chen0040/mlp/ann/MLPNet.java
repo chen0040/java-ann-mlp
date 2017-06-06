@@ -72,7 +72,7 @@ public class MLPNet {
 		hiddenLayers.add(layer);
 	}
 	
-	public double stochasticGradientDesend(double[] input, double[] target)
+	public double stochasticGradientDescend(double[] input, double[] target)
 	{
 		//forward propagate
 		double[] propagated_output = inputLayer.setOutput(input);

@@ -11,7 +11,7 @@ public class MLPNeuron {
 	private double bias = 0;
 
 	double output = 0;
-	double error = 0;
+	double dE_dzj = 0;
 
 	double[] values = null;
 
@@ -30,7 +30,7 @@ public class MLPNeuron {
         bias = rhs.bias;
         bias_weight = rhs.bias_weight;
         output = rhs.output;
-        error = rhs.error;
+        dE_dzj = rhs.dE_dzj;
         weights.clear();
         weightDeltas.clear();
 

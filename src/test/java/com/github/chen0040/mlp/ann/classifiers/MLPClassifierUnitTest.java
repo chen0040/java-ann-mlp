@@ -69,7 +69,7 @@ public class MLPClassifierUnitTest {
    }
 
    @Test
-   public void test_heartScale_fullBatch() throws FileNotFoundException {
+   public void test_heartScale_steepest_descend() throws FileNotFoundException {
       InputStream inputStream = FileUtils.getResource("heart_scale");
 
       DataFrame dataFrame = DataQuery.libsvm().from(inputStream).build();
