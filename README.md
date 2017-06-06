@@ -1,6 +1,15 @@
 # java-ann-mlp
 Package provides java implementation of multi-layer perceptron neural network with back-propagation learning algorithm 
 
+[![Build Status](https://travis-ci.org/chen0040/java-ann-mlp.svg?branch=master)](https://travis-ci.org/chen0040/java-ann-mlp) [![Coverage Status](https://coveralls.io/repos/github/chen0040/java-ann-mlp/badge.svg?branch=master)](https://coveralls.io/github/chen0040/java-ann-mlp?branch=master) 
+
+
+# Features
+
+* Regression + Classification
+* Gradient Descend with Stochastic / Mini-batch / Steepest Descend Weight Update approaches
+* Both numerical and categorical inputs
+
 # Install
 
 Add the following dependency to your POM file:
