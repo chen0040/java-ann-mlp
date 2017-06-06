@@ -24,6 +24,9 @@ public class MLPRegression {
     private List<Integer> hiddenLayers;
 
     @Setter
+    private int miniBatchSize = 50;
+
+    @Setter
     protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
 
 
@@ -63,6 +66,7 @@ public class MLPRegression {
 
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
+        mlp.setMiniBatchSize(miniBatchSize);
         mlp.setWeightUpdateMode(weightUpdateMode);
 
         int dimension = batch.row(0).toArray().length;

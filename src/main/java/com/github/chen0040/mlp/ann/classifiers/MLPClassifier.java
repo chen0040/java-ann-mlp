@@ -34,6 +34,9 @@ public class MLPClassifier {
 
     private List<String> classLabels = new ArrayList<>();
 
+    @Setter
+    private int miniBatchSize = 50;
+
     @Getter
     @Setter
     private int epoches = 1000;
@@ -154,6 +157,7 @@ public class MLPClassifier {
 
         mlp = new MLPWithLabelOutput();
         mlp.setWeightUpdateMode(weightUpdateMode);
+        mlp.setMiniBatchSize(miniBatchSize);
         mlp.classLabelsModel = () -> getClassLabels();
 
         int dimension = batch.row(0).toArray().length;

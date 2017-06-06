@@ -13,7 +13,7 @@ public class MLPNeuron {
 	double output = 0;
 	double dE_dzj = 0;
 
-	double[] values = null;
+	double[] inputs = null;
 
 	private static Random rand = new Random();
 
@@ -22,7 +22,11 @@ public class MLPNeuron {
 
     private int dimension;
 
-    public int dimension(){
+    public void setInputs(double[] inputs){
+       this.inputs = inputs;
+    }
+
+    public int inputDimension(){
         return dimension;
     }
 
@@ -78,18 +82,17 @@ public class MLPNeuron {
         weights = new HashMap<>();
         weightDeltas = new HashMap<>();
 	}
-	
-	double getValue(double[] x)
-	{
-	   values = x;
-		double sum=0;
 
-		for(int i=0; i < x.length; i++)
-		{
-			sum+=(x[i] * getWeight(i));
-			
-		}
-		sum+=(bias_weight * bias);
-		return sum;
-	}
+	public double aggregate() {
+       double sum=0;
+
+       for(int i=0; i < inputs.length; i++)
+       {
+          sum+=(inputs[i] * getWeight(i));
+
+       }
+       sum+=(bias_weight * bias);
+       return sum;
+    }
+
 }

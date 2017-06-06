@@ -131,3 +131,25 @@ mlpClassifier.setWeightUpdateMode(WeightUpdateMode.SteepestGradientDescend);
 ```java
 regression.setWeightUpdateMode(WeightUpdateMode.SteepestGradientDescend);
 ```
+
+To change it to mini-batch gradient descent:
+
+```java
+mlpClassifier.setWeightUpdateMode(WeightUpdateMode.MiniBatchGradientDescend);
+```
+
+```java
+regression.setWeightUpdateMode(WeightUpdateMode.MiniBatchGradientDescend);
+```
+
+By default the mini-batch size is set to 50, this can be changed by calling:
+
+```java
+mlpClassifier.setMiniBatchSize(51);
+```
+
+```java
+regression.setMiniBatchSize(51);
+```
+
+

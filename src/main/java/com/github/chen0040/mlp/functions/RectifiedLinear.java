@@ -1,18 +1,23 @@
 package com.github.chen0040.mlp.functions;
 
 
+import com.github.chen0040.mlp.ann.MLPLayer;
+
+
 /**
  * Created by xschen on 31/5/2017.
  */
 public class RectifiedLinear extends AbstractTransferFunction {
-   @Override public double gradient(double hx) {
-      if(hx > 0) return 1;
+   @Override public double gradient(MLPLayer layer, int j) {
+      double z = layer.get(j).aggregate();
+      if(z > 0) return 1;
       return 0;
    }
 
 
-   @Override public double calculate(double x) {
-      if(x > 0) return x;
+   @Override public double calculate(MLPLayer layer, int j) {
+      double z = layer.get(j).aggregate();
+      if(z > 0) return z;
       return 0;
    }
 }

@@ -11,7 +11,11 @@ import java.util.List;
 //default network assumes input and output are in the range of [0, 1]
 public class MLPLayer {
 	private TransferFunction transfer = new Sigmoid();
-    final List<MLPNeuron> neurons = new ArrayList<>();
+    private final List<MLPNeuron> neurons = new ArrayList<>();
+
+    public MLPNeuron get(int j){
+        return neurons.get(j);
+    }
 
     public MLPLayer(int neuron_count, int dimension)
 	{
@@ -46,13 +50,14 @@ public class MLPLayer {
         return this.transfer;
     }
 
-	public double[] forward_propagate(double[] input)
+	public double[] forward_propagate(double[] inputs)
 	{
         double[] output = new double[neurons.size()];
         for(int i=0; i< neurons.size(); i++)
         {
             MLPNeuron neuron= neurons.get(i);
-            output[i] = transfer.calculate(neuron.getValue(input));
+            neuron.setInputs(inputs);
+            output[i] = transfer.calculate(this, i);
             neuron.output = output[i];
         }
 
@@ -64,14 +69,14 @@ public class MLPLayer {
         for(int j=0; j< neurons.size(); j++)
         {
             MLPNeuron neuron_j = neurons.get(j);
-            int dimension = neuron_j.dimension();
+            int dimension = neuron_j.inputDimension();
             for(int i=0; i < dimension; ++i) {
 
                 double dE_dzj = neuron_j.dE_dzj;
 
                 double w_ji = neuron_j.getWeight(i);
 
-                double yi = neuron_j.values[i];
+                double yi = neuron_j.inputs[i];
                 double dw = learningRate * dE_dzj * yi;
                 w_ji += dw;
                 neuron_j.setWeightDelta(i, dw);
@@ -90,17 +95,15 @@ public class MLPLayer {
 	}
 
     private int dimension(){
-        return neurons.get(0).dimension();
+        return neurons.get(0).inputDimension();
     }
 	
 	public double[] back_propagate(double[] dE_dyj)
 	{
-        for(int i=0; i< neurons.size(); i++)
+        for(int j=0; j< neurons.size(); j++)
         {
-            MLPNeuron neuron= neurons.get(i);
-            double[] values = neuron.values;
-            double zj = neuron.getValue(values);
-            neuron.dE_dzj = transfer.gradient(zj) * dE_dyj[i];
+            MLPNeuron neuron_j = neurons.get(j);
+            neuron_j.dE_dzj = transfer.gradient(this, j) * dE_dyj[j];
         }
 
         int dimension = dimension();
@@ -121,4 +124,11 @@ public class MLPLayer {
 	}
 
 
+    public int size() {
+        return neurons.size();
+    }
+
+    public int inputDimension(){
+        return neurons.get(0).inputDimension();
+    }
 }

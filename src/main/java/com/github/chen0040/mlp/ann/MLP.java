@@ -79,16 +79,32 @@ public abstract class MLP extends MLPNet {
                 double[][] dE_dwj0 = new double[backLayers.size()][];
                 for(int index =0; index < backLayers.size(); ++index) {
                     MLPLayer layer = backLayers.get(index);
-                    dE_dwji[index] = new double[layer.neurons.size()][];
-                    dE_dwj0[index] = new double[layer.neurons.size()];
-                    for(int j = 0; j < layer.neurons.size(); ++j) {
-                        dE_dwji[index][j] = new double[layer.neurons.get(0).dimension()];
+                    dE_dwji[index] = new double[layer.size()][];
+                    dE_dwj0[index] = new double[layer.size()];
+                    for(int j = 0; j < layer.size(); ++j) {
+                        dE_dwji[index][j] = new double[layer.inputDimension()];
                     }
                 }
 
-                for (int rowIndex = 0; rowIndex < batch.rowCount(); rowIndex++) {
-                    DataRow row = batch.row(rowIndex);
-                    if (isValidTrainingSample(row)) {
+                int batchSize = batch.rowCount();
+                if(weightUpdateMode == WeightUpdateMode.MiniBatchGradientDescend){
+                    batchSize = miniBatchSize;
+                }
+                for (int batchStart = 0; batchStart < batch.rowCount(); batchStart+=batchSize) {
+                    int readSize = 0;
+                    for(int bIndex = 0; bIndex < batchSize; ++bIndex) {
+                        int rowIndex = batchStart + bIndex;
+
+                        readSize = bIndex;
+                        if(rowIndex >= batch.rowCount()) {
+                            break;
+                        }
+
+                        DataRow row = batch.row(rowIndex);
+                        if (!isValidTrainingSample(row)) {
+                            throw new RuntimeException("training input does not have target defined!");
+                        }
+
                         double[] x = row.toArray();
                         x = inputNormalization.standardize(x);
 
@@ -99,68 +115,63 @@ public abstract class MLP extends MLPNet {
                         }
 
                         double[] propagated_output = inputLayer.setOutput(x);
-                        for(int i=0; i < hiddenLayers.size(); ++i) {
-                            propagated_output = hiddenLayers.get(i).forward_propagate(propagated_output);
+                        for (int layerIndex = 0; layerIndex < hiddenLayers.size(); ++layerIndex) {
+                            propagated_output = hiddenLayers.get(layerIndex).forward_propagate(propagated_output);
                         }
                         propagated_output = outputLayer.forward_propagate(propagated_output);
 
                         double[] dE_dyj = minus(target, propagated_output);
-                        for(int index = 0; index < backLayers.size(); ++index){
+                        for (int layerIndex = 0; layerIndex < backLayers.size(); ++layerIndex) {
 
-                            MLPLayer layer = backLayers.get(index);
+                            MLPLayer layer = backLayers.get(layerIndex);
+                            int dimension = layer.inputDimension();
 
                             double[] dE_dzj = new double[dE_dyj.length];
-                            for(int j = 0; j < dE_dzj.length; ++j) {
-                                MLPNeuron neuron_j = layer.neurons.get(j);
-                                double zj = neuron_j.getValue(neuron_j.values);
-                                dE_dzj[j] = layer.getTransfer().gradient(zj) * dE_dyj[j];
+                            for (int j = 0; j < dE_dzj.length; ++j) {
+                                dE_dzj[j] = layer.getTransfer().gradient(layer, j) * dE_dyj[j];
                             }
-                            int dimension = layer.neurons.get(0).dimension();
+
                             double[] dE_dyi = new double[dimension];
-                            for(int i = 0; i < dimension; ++i) {
+                            for (int i = 0; i < dimension; ++i) {
                                 double sum = 0;
-                                for(int j=0; j < dE_dzj.length; ++j) {
-                                    double w_ij = layer.neurons.get(j).getWeight(i);
+                                for (int j = 0; j < dE_dzj.length; ++j) {
+                                    double w_ij = layer.get(j).getWeight(i);
                                     sum += w_ij * dE_dzj[j];
                                 }
                                 dE_dyi[i] = sum;
                             }
 
-                            for(int j = 0; j < dE_dzj.length; ++j) {
-                                for(int i=0; i < dimension; ++i) {
-                                    double yi = layer.neurons.get(j).values[i];
-                                    dE_dwji[index][j][i] += yi * dE_dzj[j];
+                            for (int j = 0; j < dE_dzj.length; ++j) {
+                                for (int i = 0; i < dimension; ++i) {
+                                    double yi = layer.get(j).inputs[i];
+                                    dE_dwji[layerIndex][j][i] += yi * dE_dzj[j];
                                 }
-                                dE_dwj0[index][j] += dE_dzj[j];
+                                dE_dwj0[layerIndex][j] += dE_dzj[j];
                             }
-
-
 
                             dE_dyj = dE_dyi;
                         }
                     }
-                }
 
-                for(int index = 0; index < backLayers.size(); ++index){
-                    MLPLayer layer = backLayers.get(index);
-                    List<MLPNeuron> neurons = layer.neurons;
-                    for(int j = 0; j < layer.neurons.size(); ++j) {
-                        int dimension = neurons.get(0).dimension();
+                    for(int index = 0; index < backLayers.size(); ++index){
+                        MLPLayer layer = backLayers.get(index);
+                        int dimension = layer.inputDimension();
+                        for(int j = 0; j < layer.size(); ++j) {
+                            for(int i=0; i < dimension; ++i){
+                                double wij = layer.get(j).getWeight(i);
 
-                        for(int i=0; i < dimension; ++i){
-                            double wij = layer.neurons.get(j).getWeight(i);
-
-                            double dwij = getLearningRate() * dE_dwji[index][j][i] / batch.rowCount();
-                            layer.neurons.get(j).setWeight(i, wij + dwij);
+                                double dwij = getLearningRate() * dE_dwji[index][j][i] / readSize;
+                                layer.get(j).setWeight(i, wij + dwij);
+                            }
                         }
-                    }
 
-                    for(int j=0; j < neurons.size(); j++)
-                    {
-                        MLPNeuron neuron = neurons.get(j);
-                        double sink_w0 = neuron.bias_weight;
-                        sink_w0 += learningRate * dE_dwj0[index][j] / batch.rowCount();
-                        neuron.bias_weight = sink_w0;
+                        for(int j=0; j < layer.size(); j++)
+                        {
+                            MLPNeuron neuron = layer.get(j);
+                            double sink_w0 = neuron.bias_weight;
+                            sink_w0 += learningRate * dE_dwj0[index][j] / readSize;
+                            neuron.bias_weight = sink_w0;
+                        }
                     }
                 }
             }

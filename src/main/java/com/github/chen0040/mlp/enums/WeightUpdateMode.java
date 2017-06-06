@@ -6,5 +6,6 @@ package com.github.chen0040.mlp.enums;
  */
 public enum WeightUpdateMode {
    StochasticGradientDescend, // stochastic gradient descend
-   SteepestGradientDescend // steepest gradient descend
+   SteepestGradientDescend, // steepest gradient descend
+   MiniBatchGradientDescend
 }

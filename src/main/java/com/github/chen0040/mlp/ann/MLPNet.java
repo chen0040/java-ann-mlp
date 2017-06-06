@@ -27,15 +27,18 @@ public class MLPNet {
 	@Setter
 	protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
 
+	@Setter
+	protected int miniBatchSize = 50;
 
 
-	public MLPLayer createInputLayer(int dimension){
-		inputLayer = new MLPLayer(dimension, 1);
+
+	public MLPLayer createInputLayer(int size){
+		inputLayer = new MLPLayer(size, 1);
 		return inputLayer;
 	}
 
-	public MLPLayer createOutputLayer(int dimension){
-		outputLayer = new MLPLayer(dimension, hiddenLayers.get(hiddenLayers.size()-1).neurons.size());
+	public MLPLayer createOutputLayer(int size){
+		outputLayer = new MLPLayer(size, hiddenLayers.get(hiddenLayers.size()-1).size());
 		return outputLayer;
 	}
 
@@ -53,9 +56,9 @@ public class MLPNet {
 	{
 		MLPLayer layer;
 		if(hiddenLayers.isEmpty()){
-			layer = new MLPLayer(neuron_count, inputLayer.neurons.size());
+			layer = new MLPLayer(neuron_count, inputLayer.size());
 		} else {
-			layer = new MLPLayer(neuron_count, hiddenLayers.get(hiddenLayers.size() - 1).neurons.size());
+			layer = new MLPLayer(neuron_count, hiddenLayers.get(hiddenLayers.size() - 1).size());
 		}
 		hiddenLayers.add(layer);
 	}
@@ -64,9 +67,9 @@ public class MLPNet {
 	{
 		MLPLayer layer;
 		if(hiddenLayers.isEmpty()) {
-			layer = new MLPLayer(neuron_count, inputLayer.neurons.size());
+			layer = new MLPLayer(neuron_count, inputLayer.size());
 		} else {
-			layer = new MLPLayer(neuron_count, hiddenLayers.get(hiddenLayers.size() - 1).neurons.size());
+			layer = new MLPLayer(neuron_count, hiddenLayers.get(hiddenLayers.size() - 1).size());
 		}
 		layer.setTransfer(transfer_function);
 		hiddenLayers.add(layer);
