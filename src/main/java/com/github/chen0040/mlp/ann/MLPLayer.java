@@ -12,13 +12,13 @@ import java.util.List;
 //default network assumes input and output are in the range of [0, 1]
 public class MLPLayer {
 	private TransferFunction transfer = new Sigmoid();
-    private final List<MLPNeuron> neurons = new ArrayList<>();
+    final List<MLPNeuron> neurons = new ArrayList<>();
 
-    public MLPLayer(int neuron_count)
+    public MLPLayer(int neuron_count, int dimension)
 	{
-		for(int i=0; i<neuron_count; i++)
+		for(int i=0; i < neuron_count; i++)
 		{
-			neurons.add(new MLPNeuron());
+			neurons.add(new MLPNeuron(dimension));
 		}
 	}
 
@@ -43,6 +43,10 @@ public class MLPLayer {
         this.transfer = transfer;
     }
 
+    public TransferFunction getTransfer(){
+        return this.transfer;
+    }
+
 	public double[] forward_propagate(double[] input)
 	{
         double[] output = new double[neurons.size()];
@@ -56,7 +60,7 @@ public class MLPLayer {
         return output;
 	}
 	
-	protected void adjust_weights(double[] input, double learningRate)
+	protected void adjust_weights(double learningRate)
 	{
         for(int j=0; j< neurons.size(); j++)
         {
@@ -68,7 +72,7 @@ public class MLPLayer {
 
                 double weight = neuron.getWeight(i);
 
-                double dw = learningRate * sink_error * input[i];
+                double dw = learningRate * sink_error * neuron.values[i];
                 weight += dw;
                 neuron.setWeightDelta(i, dw);
                 neuron.setWeight(i, weight);

@@ -2,6 +2,7 @@ package com.github.chen0040.mlp.ann;
 
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -16,11 +17,13 @@ public class MLPNeuron {
 
 	private static Random rand = new Random();
 
-    private HashMap<Integer, Double> weights;
-    private HashMap<Integer, Double> weightDeltas;
+    private Map<Integer, Double> weights;
+    private Map<Integer, Double> weightDeltas;
+
+    private int dimension;
 
     public int dimension(){
-        return weights.size();
+        return dimension;
     }
 
     public void copy(MLPNeuron rhs){
@@ -30,6 +33,8 @@ public class MLPNeuron {
         error = rhs.error;
         weights.clear();
         weightDeltas.clear();
+
+        this.dimension = rhs.dimension;
 
         for(Integer i : rhs.weights.keySet()){
             weights.put(i, rhs.weights.get(i));
@@ -41,7 +46,7 @@ public class MLPNeuron {
 
     @Override
     public Object clone(){
-        MLPNeuron clone = new MLPNeuron();
+        MLPNeuron clone = new MLPNeuron(dimension);
         clone.copy(this);
         return clone;
     }
@@ -64,8 +69,9 @@ public class MLPNeuron {
         weights.put(index, val);
     }
 	
-	public MLPNeuron()
+	public MLPNeuron(int dimension)
 	{
+	    this.dimension = dimension;
 		bias_weight =rand.nextDouble()-0.5;
 		bias =-1;
 

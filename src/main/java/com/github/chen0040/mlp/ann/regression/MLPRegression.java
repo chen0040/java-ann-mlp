@@ -2,7 +2,7 @@ package com.github.chen0040.mlp.ann.regression;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
-import com.github.chen0040.mlp.functions.RectifiedLinear;
+import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
@@ -22,6 +22,10 @@ public class MLPRegression {
     @Setter
     private int epoches = 1000;
     private List<Integer> hiddenLayers;
+
+    @Setter
+    protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
+
 
     @Getter
     @Setter
@@ -59,9 +63,7 @@ public class MLPRegression {
 
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
-
-
-
+        mlp.setWeightUpdateMode(weightUpdateMode);
 
         int dimension = batch.row(0).toArray().length;
 

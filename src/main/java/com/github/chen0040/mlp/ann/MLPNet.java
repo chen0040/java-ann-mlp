@@ -1,5 +1,6 @@
 package com.github.chen0040.mlp.ann;
 
+import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,15 +24,18 @@ public class MLPNet {
 	@Setter
 	protected double learningRate =0.25; //learning rate
 
+	@Setter
+	protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
+
 
 
 	public MLPLayer createInputLayer(int dimension){
-		inputLayer = new MLPLayer(dimension);
+		inputLayer = new MLPLayer(dimension, 1);
 		return inputLayer;
 	}
 
 	public MLPLayer createOutputLayer(int dimension){
-		outputLayer = new MLPLayer(dimension);
+		outputLayer = new MLPLayer(dimension, hiddenLayers.get(hiddenLayers.size()-1).neurons.size());
 		return outputLayer;
 	}
 
@@ -47,18 +51,28 @@ public class MLPNet {
 
 	public void addHiddenLayer(int neuron_count)
 	{
-		MLPLayer layer=new MLPLayer(neuron_count);
+		MLPLayer layer;
+		if(hiddenLayers.isEmpty()){
+			layer = new MLPLayer(neuron_count, inputLayer.neurons.size());
+		} else {
+			layer = new MLPLayer(neuron_count, hiddenLayers.get(hiddenLayers.size() - 1).neurons.size());
+		}
 		hiddenLayers.add(layer);
 	}
 	
 	public void addHiddenLayer(int neuron_count, TransferFunction transfer_function)
 	{
-		MLPLayer layer=new MLPLayer(neuron_count);
+		MLPLayer layer;
+		if(hiddenLayers.isEmpty()) {
+			layer = new MLPLayer(neuron_count, inputLayer.neurons.size());
+		} else {
+			layer = new MLPLayer(neuron_count, hiddenLayers.get(hiddenLayers.size() - 1).neurons.size());
+		}
 		layer.setTransfer(transfer_function);
 		hiddenLayers.add(layer);
 	}
 	
-	public double train(double[] input, double[] target)
+	public double stochasticGradientDesend(double[] input, double[] target)
 	{
 		//forward propagate
 		double[] propagated_output = inputLayer.setOutput(input);
@@ -78,12 +92,10 @@ public class MLPNet {
 		}
 
 		//adjust weights
-		double[] input2 = inputLayer.output();
 		for(int i = 0; i < hiddenLayers.size(); ++i){
-			hiddenLayers.get(i).adjust_weights(input2, getLearningRate());
-			input2 = hiddenLayers.get(i).output();
+			hiddenLayers.get(i).adjust_weights(getLearningRate());
 		}
-		outputLayer.adjust_weights(input2, getLearningRate());
+		outputLayer.adjust_weights(getLearningRate());
 
 		
 		return error; 

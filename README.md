@@ -111,3 +111,14 @@ for(int i = 0; i < dataFrame.rowCount(); ++i){
 System.out.println("Prediction Accuracy: "+(correctnessCount * 100 / dataFrame.rowCount()));
 ```
 
+### Weight Updating
+
+By default the weight updating is done via stochastic gradient descend, to change it to steepest gradient descent:
+
+```java
+mlpClassifier.setWeightUpdateMode(WeightUpdateMode.SteepestGradientDescend);
+```
+
+```java
+regression.setWeightUpdateMode(WeightUpdateMode.SteepestGradientDescend);
+```

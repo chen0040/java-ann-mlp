@@ -2,6 +2,7 @@ package com.github.chen0040.mlp.ann.classifiers;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -26,6 +27,10 @@ public class MLPClassifier {
     public static final String HIDDEN_LAYER5 = "hiddenLayer5";
     public static final String HIDDEN_LAYER6 = "hiddenLayer6";
     public static final String HIDDEN_LAYER7 = "hiddenLayer7";
+
+    @Setter
+    protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
+
 
     private List<String> classLabels = new ArrayList<>();
 
@@ -148,6 +153,7 @@ public class MLPClassifier {
         logger.info("class labels: {}", classLabels.size());
 
         mlp = new MLPWithLabelOutput();
+        mlp.setWeightUpdateMode(weightUpdateMode);
         mlp.classLabelsModel = () -> getClassLabels();
 
         int dimension = batch.row(0).toArray().length;
