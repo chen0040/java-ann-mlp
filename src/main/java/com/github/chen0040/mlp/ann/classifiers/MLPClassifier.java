@@ -3,6 +3,8 @@ package com.github.chen0040.mlp.ann.classifiers;
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
+import com.github.chen0040.mlp.functions.Sigmoid;
+import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -44,6 +46,14 @@ public class MLPClassifier {
     @Getter
     @Setter
     private double learningRate = 0.2;
+
+    @Getter
+    @Setter
+    private TransferFunction hiddenLayerTransfer = new Sigmoid();
+
+    @Getter
+    @Setter
+    private TransferFunction outputLayerTransfer = new Sigmoid();
 
     private Map<String, Integer> hiddenLayer = new HashMap<>();
 
@@ -167,9 +177,9 @@ public class MLPClassifier {
         mlp.setLearningRate(learningRate);
         mlp.createInputLayer(dimension);
         for (int hiddenLayerNeuronCount : hiddenLayers){
-            mlp.addHiddenLayer(hiddenLayerNeuronCount);
+            mlp.addHiddenLayer(hiddenLayerNeuronCount, hiddenLayerTransfer);
         }
-        mlp.createOutputLayer(getClassLabels().size());
+        mlp.createOutputLayer(getClassLabels().size()).setTransfer(outputLayerTransfer);
 
         mlp.train(batch, epoches);
     }

@@ -53,10 +53,13 @@ public class MLPLayer {
 	public double[] forward_propagate(double[] inputs)
 	{
         double[] output = new double[neurons.size()];
-        for(int i=0; i< neurons.size(); i++)
-        {
-            MLPNeuron neuron= neurons.get(i);
+        for(int i=0; i< neurons.size(); i++) {
+            MLPNeuron neuron = neurons.get(i);
             neuron.setInputs(inputs);
+        }
+
+        for(int i=0; i < neurons.size(); ++i) {
+            MLPNeuron neuron = neurons.get(i);
             output[i] = transfer.calculate(this, i);
             neuron.output = output[i];
         }

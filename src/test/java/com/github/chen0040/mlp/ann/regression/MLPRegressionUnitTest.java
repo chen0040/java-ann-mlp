@@ -214,7 +214,8 @@ public class MLPRegressionUnitTest {
       DataFrame crossValidationData = frames._2();
 
       MLPRegression regression = new MLPRegression();
-      regression.setTransferFunction(new RectifiedLinear());
+      regression.setHiddenLayerTransfer(new RectifiedLinear());
+      regression.setOutputLayerTransfer(new RectifiedLinear());
       regression.setHiddenLayers(8);
       regression.setEpoches(1000);
       regression.fit(trainingData);

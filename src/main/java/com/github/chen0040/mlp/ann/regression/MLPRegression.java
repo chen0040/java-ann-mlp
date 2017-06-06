@@ -32,7 +32,11 @@ public class MLPRegression {
 
     @Getter
     @Setter
-    private TransferFunction transferFunction = new Sigmoid();
+    private TransferFunction hiddenLayerTransfer = new Sigmoid();
+
+    @Getter
+    @Setter
+    private TransferFunction outputLayerTransfer = new Sigmoid();
 
     @Getter
     @Setter
@@ -74,10 +78,10 @@ public class MLPRegression {
         mlp.setLearningRate(learningRate);
         mlp.createInputLayer(dimension);
         for (int hiddenLayerNeuronCount : hiddenLayers){
-            mlp.addHiddenLayer(hiddenLayerNeuronCount, transferFunction);
+            mlp.addHiddenLayer(hiddenLayerNeuronCount, hiddenLayerTransfer);
         }
         mlp.createOutputLayer(1);
-        mlp.outputLayer.setTransfer(transferFunction);
+        mlp.outputLayer.setTransfer(outputLayerTransfer);
 
         mlp.train(batch, epoches);
     }
