@@ -111,7 +111,7 @@ public abstract class MLP extends MLPNet {
                             double[] dE_dzj = new double[dE_dyj.length];
                             for(int j = 0; j < dE_dzj.length; ++j) {
                                 double yj = layer.neurons.get(j).output;
-                                dE_dzj[j] = layer.getTransfer().gradient(yj, yj) * dE_dyj[j];
+                                dE_dzj[j] = layer.getTransfer().gradient(yj) * dE_dyj[j];
                             }
                             int dimension = layer.neurons.get(0).dimension();
                             double[] dE_dyi = new double[dimension];

@@ -6,5 +6,5 @@ package com.github.chen0040.mlp.functions;
 public interface TransferFunction {
     double calculate(double x);
 
-    double gradient(double hx, double y);
+    double gradient(double z);
 }

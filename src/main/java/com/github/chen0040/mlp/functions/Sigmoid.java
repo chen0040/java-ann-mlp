@@ -11,8 +11,8 @@ public class Sigmoid extends AbstractTransferFunction
 	}
 
 
-	@Override public double gradient(double hx, double y) {
-		y = calculate(hx);
+	@Override public double gradient(double z) {
+		double y = calculate(z);
 		return y * (1-y);
 	}
 }

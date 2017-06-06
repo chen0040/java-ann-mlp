@@ -5,7 +5,7 @@ package com.github.chen0040.mlp.functions;
  * Created by xschen on 31/5/2017.
  */
 public class RectifiedLinear extends AbstractTransferFunction {
-   @Override public double gradient(double hx, double y) {
+   @Override public double gradient(double hx) {
       if(hx > 0) return 1;
       return 0;
    }

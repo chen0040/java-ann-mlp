@@ -102,7 +102,7 @@ public class MLPLayer {
             double[] values = neuron.values;
             double hx = neuron.getValue(values);
 
-            neuron.error = transfer.gradient(hx, y) * error[i];
+            neuron.error = transfer.gradient(hx) * error[i];
         }
 
         int k = dimension();
