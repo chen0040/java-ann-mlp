@@ -75,28 +75,31 @@ public abstract class MLP extends MLPNet {
                     backLayers.add(hiddenLayers.get(index));
                 }
 
-                double[][][] dE_dwji = new double[backLayers.size()][][];
-                double[][] dE_dwj0 = new double[backLayers.size()][];
-                for(int index =0; index < backLayers.size(); ++index) {
-                    MLPLayer layer = backLayers.get(index);
-                    dE_dwji[index] = new double[layer.size()][];
-                    dE_dwj0[index] = new double[layer.size()];
-                    for(int j = 0; j < layer.size(); ++j) {
-                        dE_dwji[index][j] = new double[layer.inputDimension()];
-                    }
-                }
+
 
                 int batchSize = batch.rowCount();
                 if(weightUpdateMode == WeightUpdateMode.MiniBatchGradientDescend){
                     batchSize = miniBatchSize;
                 }
                 for (int batchStart = 0; batchStart < batch.rowCount(); batchStart+=batchSize) {
-                    int readSize = 0;
+                    int actualBatchSize = 0;
+                    double[][][] dE_dwji = new double[backLayers.size()][][];
+                    double[][] dE_dwj0 = new double[backLayers.size()][];
+                    for(int index =0; index < backLayers.size(); ++index) {
+                        MLPLayer layer = backLayers.get(index);
+                        dE_dwji[index] = new double[layer.size()][];
+                        dE_dwj0[index] = new double[layer.size()];
+                        for(int j = 0; j < layer.size(); ++j) {
+                            dE_dwji[index][j] = new double[layer.inputDimension()];
+                        }
+                    }
+
+                    actualBatchSize = batchSize;
                     for(int bIndex = 0; bIndex < batchSize; ++bIndex) {
                         int rowIndex = batchStart + bIndex;
 
-                        readSize = bIndex;
                         if(rowIndex >= batch.rowCount()) {
+                            actualBatchSize = bIndex;
                             break;
                         }
 
@@ -160,7 +163,7 @@ public abstract class MLP extends MLPNet {
                             for(int i=0; i < dimension; ++i){
                                 double wij = layer.get(j).getWeight(i);
 
-                                double dwij = getLearningRate() * dE_dwji[index][j][i] / readSize;
+                                double dwij = getLearningRate() * dE_dwji[index][j][i] / actualBatchSize;
                                 layer.get(j).setWeight(i, wij + dwij);
                             }
                         }
@@ -169,7 +172,7 @@ public abstract class MLP extends MLPNet {
                         {
                             MLPNeuron neuron = layer.get(j);
                             double sink_w0 = neuron.bias_weight;
-                            sink_w0 += learningRate * dE_dwj0[index][j] / readSize;
+                            sink_w0 += learningRate * dE_dwj0[index][j] / actualBatchSize;
                             neuron.bias_weight = sink_w0;
                         }
                     }
