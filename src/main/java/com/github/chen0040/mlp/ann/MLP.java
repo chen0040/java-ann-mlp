@@ -16,11 +16,17 @@ public abstract class MLP extends MLPNet {
     private Standardization inputNormalization;
     private RangeScaler outputNormalization;
 
+    private boolean adaptiveLearningRateEnabled = false;
+
     private boolean normalizeOutputs;
 
     public MLP(){
         super();
         normalizeOutputs = false;
+    }
+
+    public void enabledAdaptiveLearningRate(boolean enabled){
+        adaptiveLearningRateEnabled = enabled;
     }
 
     protected abstract boolean isValidTrainingSample(DataRow tuple);
@@ -48,6 +54,9 @@ public abstract class MLP extends MLPNet {
             }
             outputNormalization = new RangeScaler(targets);
         }
+
+        double[][][] dE_dwji_prev = null;
+        double[][] dE_dwj0_prev = null;
 
 
         for(int epoch=0; epoch < training_epoches; ++epoch)
@@ -81,6 +90,7 @@ public abstract class MLP extends MLPNet {
                 if(weightUpdateMode == WeightUpdateMode.MiniBatchGradientDescend){
                     batchSize = miniBatchSize;
                 }
+
                 for (int batchStart = 0; batchStart < batch.rowCount(); batchStart+=batchSize) {
                     int actualBatchSize = 0;
                     double[][][] dE_dwji = new double[backLayers.size()][][];
@@ -124,6 +134,7 @@ public abstract class MLP extends MLPNet {
                         propagated_output = outputLayer.forward_propagate(propagated_output);
 
                         double[] dE_dyj = minus(target, propagated_output);
+
                         for (int layerIndex = 0; layerIndex < backLayers.size(); ++layerIndex) {
 
                             MLPLayer layer = backLayers.get(layerIndex);
@@ -162,10 +173,22 @@ public abstract class MLP extends MLPNet {
                         int dimension = layer.inputDimension();
                         for(int j = 0; j < layer.size(); ++j) {
                             for(int i=0; i < dimension; ++i){
-                                double wij = layer.get(j).getWeight(i);
+                                double wji = layer.get(j).getWeight(i);
+                                double gji = layer.get(j).getLearningRateGain(i);
 
-                                double dwij = getLearningRate() * dE_dwji[index][j][i] / actualBatchSize;
-                                layer.get(j).setWeight(i, wij + dwij);
+                                // adaptive learning rate
+                                if(adaptiveLearningRateEnabled && dE_dwji_prev != null){
+                                    double grad_prod = dE_dwji_prev[index][j][i] * dE_dwji[index][j][i];
+                                    if(grad_prod > 0) {
+                                        gji = gji + 0.05;
+                                    } else {
+                                        gji = gji * 0.95;
+                                    }
+                                    layer.get(j).setLearningRateGain(i, gji);
+                                }
+
+                                double dwij = learningRate * gji * dE_dwji[index][j][i] / actualBatchSize;
+                                layer.get(j).setWeight(i, wji + dwij);
                             }
                         }
 
@@ -173,11 +196,29 @@ public abstract class MLP extends MLPNet {
                         {
                             MLPNeuron neuron = layer.get(j);
                             double sink_w0 = neuron.bias_weight;
-                            sink_w0 += learningRate * dE_dwj0[index][j] / actualBatchSize;
+                            double gji = layer.get(j).getLearningRateGain(-1);
+
+                            // adaptive learning rate
+                            if(adaptiveLearningRateEnabled && dE_dwj0_prev != null){
+                                double grad_prod = dE_dwj0_prev[index][j] * dE_dwj0[index][j];
+                                if(grad_prod > 0) {
+                                    gji = gji + 0.05;
+                                } else {
+                                    gji = gji * 0.95;
+                                }
+                                layer.get(j).setLearningRateGain(-1, gji);
+                            }
+
+                            sink_w0 += learningRate * gji * dE_dwj0[index][j] / actualBatchSize;
                             neuron.bias_weight = sink_w0;
                         }
                     }
+
+                    dE_dwj0_prev = dE_dwj0;
+                    dE_dwji_prev = dE_dwji;
                 }
+
+
             }
 
         }

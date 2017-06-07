@@ -34,6 +34,11 @@ public class MLPClassifier {
     @Setter
     protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
 
+    private boolean adaptiveLearningRateEnabled = false;
+
+    public void enabledAdaptiveLearningRate(boolean enabled){
+        adaptiveLearningRateEnabled = enabled;
+    }
 
     private List<String> classLabels = new ArrayList<>();
 
@@ -170,6 +175,7 @@ public class MLPClassifier {
         mlp = new MLPWithLabelOutput();
         mlp.setWeightUpdateMode(weightUpdateMode);
         mlp.setMiniBatchSize(miniBatchSize);
+        mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);
         mlp.classLabelsModel = () -> getClassLabels();
 
         int dimension = batch.row(0).toArray().length;

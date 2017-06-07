@@ -18,7 +18,7 @@ public class MLPNeuron {
 	private static Random rand = new Random();
 
     private Map<Integer, Double> weights;
-    private Map<Integer, Double> weightDeltas;
+    private Map<Integer, Double> learningRateGains; // local gain on the learning rate;
 
     private int dimension;
 
@@ -36,15 +36,15 @@ public class MLPNeuron {
         output = rhs.output;
         dE_dzj = rhs.dE_dzj;
         weights.clear();
-        weightDeltas.clear();
+        learningRateGains.clear();
 
         this.dimension = rhs.dimension;
 
         for(Integer i : rhs.weights.keySet()){
             weights.put(i, rhs.weights.get(i));
         }
-        for(Integer i : rhs.weightDeltas.keySet()){
-            weightDeltas.put(i, rhs.weightDeltas.get(i));
+        for(Integer i : rhs.learningRateGains.keySet()){
+            learningRateGains.put(i, rhs.learningRateGains.get(i));
         }
     }
 
@@ -66,12 +66,22 @@ public class MLPNeuron {
     }
 
     public void setWeightDelta(int index, double val){
-        weightDeltas.put(index, val);
+        learningRateGains.put(index, val);
     }
 
     public void setWeight(int index, double val){
         weights.put(index, val);
     }
+
+    public void setLearningRateGain(int index, double value) {
+        learningRateGains.put(index, value);
+    }
+
+    public double getLearningRateGain(int index) {
+        return learningRateGains.getOrDefault(index, 1.0);
+    }
+
+
 	
 	public MLPNeuron(int dimension)
 	{
@@ -80,7 +90,7 @@ public class MLPNeuron {
 		bias =-1;
 
         weights = new HashMap<>();
-        weightDeltas = new HashMap<>();
+        learningRateGains = new HashMap<>();
 	}
 
 	public double aggregate() {
