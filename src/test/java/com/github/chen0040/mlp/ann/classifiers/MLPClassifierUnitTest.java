@@ -140,7 +140,7 @@ public class MLPClassifierUnitTest {
    }
 
    @Test
-   public void test_heartScale_mini_batch_descend_softmax() throws FileNotFoundException {
+   public void test_heartScale_mini_batch_descend_sigmoid_output_activation() throws FileNotFoundException {
       InputStream inputStream = FileUtils.getResource("heart_scale");
 
       DataFrame dataFrame = DataQuery.libsvm().from(inputStream).build();
@@ -156,7 +156,7 @@ public class MLPClassifierUnitTest {
       mlpClassifier.setWeightUpdateMode(WeightUpdateMode.MiniBatchGradientDescend);
       mlpClassifier.setMiniBatchSize(20);
       mlpClassifier.setHiddenLayerTransfer(new Sigmoid());
-      mlpClassifier.setOutputLayerTransfer(new SoftMax());
+      mlpClassifier.setOutputLayerTransfer(new Sigmoid());
       mlpClassifier.setHiddenLayers(6); // one hidden layer, to set two or more hidden layer call mlpClassifier.setHiddenLayer([layer1NeuronCunt], [layer2NeuronCunt], ...);
       mlpClassifier.fit(dataFrame);
 

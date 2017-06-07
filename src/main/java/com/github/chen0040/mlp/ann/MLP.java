@@ -131,6 +131,7 @@ public abstract class MLP extends MLPNet {
 
                             double[] dE_dzj = new double[dE_dyj.length];
                             for (int j = 0; j < dE_dzj.length; ++j) {
+
                                 dE_dzj[j] = layer.getTransfer().gradient(layer, j) * dE_dyj[j];
                             }
 

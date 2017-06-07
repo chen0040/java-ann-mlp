@@ -4,6 +4,7 @@ import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.Sigmoid;
+import com.github.chen0040.mlp.functions.SoftMax;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,9 +52,10 @@ public class MLPClassifier {
     @Setter
     private TransferFunction hiddenLayerTransfer = new Sigmoid();
 
+    // soft-max is suitable for multi-class classification
     @Getter
     @Setter
-    private TransferFunction outputLayerTransfer = new Sigmoid();
+    private TransferFunction outputLayerTransfer = new SoftMax();
 
     private Map<String, Integer> hiddenLayer = new HashMap<>();
 
