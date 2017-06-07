@@ -6,7 +6,9 @@ import com.github.chen0040.data.frame.DataQuery;
 import com.github.chen0040.data.frame.Sampler;
 import com.github.chen0040.data.utils.TupleTwo;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
-import com.github.chen0040.mlp.functions.RectifiedLinear;
+import com.github.chen0040.mlp.functions.Identity;
+import com.github.chen0040.mlp.functions.ReLU;
+import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.utils.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,8 +216,8 @@ public class MLPRegressionUnitTest {
       DataFrame crossValidationData = frames._2();
 
       MLPRegression regression = new MLPRegression();
-      regression.setHiddenLayerTransfer(new RectifiedLinear());
-      regression.setOutputLayerTransfer(new RectifiedLinear());
+      regression.setHiddenLayerTransfer(new Sigmoid());
+      regression.setOutputLayerTransfer(new ReLU());
       regression.setHiddenLayers(8);
       regression.setEpoches(1000);
       regression.fit(trainingData);

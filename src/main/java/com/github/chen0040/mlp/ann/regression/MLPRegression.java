@@ -3,6 +3,8 @@ package com.github.chen0040.mlp.ann.regression;
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
+import com.github.chen0040.mlp.functions.Identity;
+import com.github.chen0040.mlp.functions.ReLU;
 import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
@@ -36,7 +38,7 @@ public class MLPRegression {
 
     @Getter
     @Setter
-    private TransferFunction outputLayerTransfer = new Sigmoid();
+    private TransferFunction outputLayerTransfer = new Identity();
 
     @Getter
     @Setter
