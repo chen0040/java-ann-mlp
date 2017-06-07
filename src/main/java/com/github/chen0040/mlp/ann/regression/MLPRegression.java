@@ -29,6 +29,9 @@ public class MLPRegression {
     private int miniBatchSize = 50;
 
     @Setter
+    private double maxLearningRate = 1.0;
+
+    @Setter
     protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
 
     private boolean adaptiveLearningRateEnabled = false;
@@ -79,6 +82,7 @@ public class MLPRegression {
         mlp.setNormalizeOutputs(true);
         mlp.setMiniBatchSize(miniBatchSize);
         mlp.setWeightUpdateMode(weightUpdateMode);
+        mlp.setMaxLearningRate(maxLearningRate);
         mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);
 
         int dimension = batch.row(0).toArray().length;

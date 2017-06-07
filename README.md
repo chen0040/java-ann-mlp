@@ -8,7 +8,7 @@ Package provides java implementation of multi-layer perceptron neural network wi
 
 * Regression + Classification
 * Gradient Descend with Stochastic / Mini-batch / Steepest Descend Weight Update approaches
-* Adaptive learning rate for each connection
+* Adaptive learning rate for individual weights
 * Both numerical and categorical inputs
 
 # Install
@@ -157,7 +157,7 @@ regression.setMiniBatchSize(51);
 
 ### Adaptive learning rate
 
-The mlp can adapt the learning for individual neuron, by default this is not enabled, to enable adaptive learning rate:
+The mlp can adapt the learning for individual weight, by default this is not enabled, to enable adaptive learning rate:
 
 ```java
 mlpClassifier.enableAdaptiveLearningRate(true);

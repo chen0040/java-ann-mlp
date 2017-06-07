@@ -40,6 +40,9 @@ public class MLPClassifier {
         adaptiveLearningRateEnabled = enabled;
     }
 
+    @Setter
+    private double maxLearningRate = 1.0;
+
     private List<String> classLabels = new ArrayList<>();
 
     @Setter
@@ -175,6 +178,7 @@ public class MLPClassifier {
         mlp = new MLPWithLabelOutput();
         mlp.setWeightUpdateMode(weightUpdateMode);
         mlp.setMiniBatchSize(miniBatchSize);
+        mlp.setMaxLearningRate(maxLearningRate);
         mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);
         mlp.classLabelsModel = () -> getClassLabels();
 

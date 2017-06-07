@@ -4,6 +4,7 @@ import com.github.chen0040.data.frame.DataRow;
 import com.github.chen0040.data.utils.transforms.Standardization;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.RangeScaler;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,9 @@ public abstract class MLP extends MLPNet {
     private RangeScaler outputNormalization;
 
     private boolean adaptiveLearningRateEnabled = false;
+
+    @Setter
+    private double maxLearningRate = 1.0;
 
     private boolean normalizeOutputs;
 
@@ -181,11 +185,15 @@ public abstract class MLP extends MLPNet {
                                     double grad_prod = dE_dwji_prev[index][j][i] * dE_dwji[index][j][i];
                                     if(grad_prod > 0) {
                                         gji = gji + 0.05;
-                                    } else {
+                                    } else if(grad_prod < 0) {
                                         gji = gji * 0.95;
                                     }
+
+                                    gji = Math.min(maxLearningRate / learningRate, gji);
                                     layer.get(j).setLearningRateGain(i, gji);
                                 }
+
+
 
                                 double dwij = learningRate * gji * dE_dwji[index][j][i] / actualBatchSize;
                                 layer.get(j).setWeight(i, wji + dwij);
@@ -203,9 +211,12 @@ public abstract class MLP extends MLPNet {
                                 double grad_prod = dE_dwj0_prev[index][j] * dE_dwj0[index][j];
                                 if(grad_prod > 0) {
                                     gji = gji + 0.05;
-                                } else {
+                                } else  if(grad_prod < 0) {
                                     gji = gji * 0.95;
                                 }
+
+                                gji = Math.min(maxLearningRate / learningRate, gji);
+
                                 layer.get(j).setLearningRateGain(-1, gji);
                             }
 
