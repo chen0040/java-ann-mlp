@@ -4,7 +4,10 @@ package com.github.chen0040.mlp.functions;
 import com.github.chen0040.mlp.ann.MLPLayer;
 import com.github.chen0040.mlp.ann.MLPNeuron;
 
-
+/**
+ * Created by xschen on 6/6/2017.
+ * Sigmoid function
+ */
 public class Sigmoid extends AbstractTransferFunction
 {
 	@Override
