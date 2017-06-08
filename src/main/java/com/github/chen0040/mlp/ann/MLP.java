@@ -219,7 +219,7 @@ public abstract class MLP extends MLPNet {
                                 }
 
                                 if(lambda > 0){
-                                    dwij -= lambda * wji;
+                                    dwij += lambda * wji;
                                 }
 
                                 // gradient descend
@@ -276,7 +276,7 @@ public abstract class MLP extends MLPNet {
                             }
 
                             if(lambda > 0){
-                                dwj0 -= lambda * wj0;
+                                dwj0 += lambda * wj0;
                             }
 
                             // gradient descend

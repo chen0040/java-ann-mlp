@@ -127,6 +127,25 @@ System.out.println("Prediction Accuracy: "+(correctnessCount * 100 / dataFrame.r
 
 ### How often to update weights
 
+ The weight update mode specifies how often the weights should be updated for a number of training cases:
+ 
+ * StochasticGradientDescend: The "online" version of the stochastic gradient descend essentially update the weights after each training case.
+ * MiniBatchGradientDescend: The "mini-batch" version of the stochastic gradient descend that update the weights over a batch of training cases.
+ * SteepestGradientDescend: The "full" version update the weights over all the training cases.
+ 
+ The "mini-batch" is considered to be the most appropriate for most of the deep net training.
+ 
+ For the "mini-batch" to work well on a multi-class classification problem, the batches should be "balanced" for classes
+ (i.e., containing roughly the same number of different classes for each batch)
+ 
+ For a small datasets (e.g., 10,000 cases) or bigger datasets without much redundancy, consider using
+ 1. full-batch steepest descend
+ 2. adaptive learning rates, resilient back-propagation
+ 
+ For big, redundant datasets, consider using mini-batches:
+ 1. try gradient descent with momentum
+ 2. try rmsprop without momentum
+
 By default the weight updating is done via online stochastic gradient descend, to change it to steepest gradient descent:
 
 ```java
@@ -190,4 +209,7 @@ The size of the weight in the mlp can be limited via the L2 regularization, whic
  ```java
  mlpClassifier.setLambda(0.1); 
  ```
+ 
+ The effect of L2 weight cost is to prevent the network from using weights that it does not need. This can often improve generalization a lot
+ because it helps to stop the network from fitting the sampling error.
 
