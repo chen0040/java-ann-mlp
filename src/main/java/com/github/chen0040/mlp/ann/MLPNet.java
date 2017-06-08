@@ -1,5 +1,6 @@
 package com.github.chen0040.mlp.ann;
 
+import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
@@ -17,6 +18,15 @@ public class MLPNet {
 	public MLPLayer outputLayer =null;
 
 	protected List<MLPLayer> hiddenLayers;
+
+	@Setter
+	protected double maxLearningRate = 1.0;
+
+	@Setter
+	protected double lambda = 0.0; // L2 regularization for limiting the size of the weights
+
+	@Setter
+	protected LearningMethod learningMethod = LearningMethod.BackPropagation;
 
 	private static final Logger logger = LoggerFactory.getLogger(MLPNet.class);
 
@@ -89,16 +99,16 @@ public class MLPNet {
 
 		
 		//backward propagate
-		double[] propagated_error = outputLayer.back_propagate(minus(target, propagated_output));
+		double[] propagated_error = outputLayer.back_propagate(minus(propagated_output, target));
 		for(int i = hiddenLayers.size()-1; i >= 0; --i){
 			propagated_error = hiddenLayers.get(i).back_propagate(propagated_error);
 		}
 
 		//adjust weights
 		for(int i = 0; i < hiddenLayers.size(); ++i){
-			hiddenLayers.get(i).adjust_weights(getLearningRate());
+			hiddenLayers.get(i).adjust_weights(getLearningRate(), lambda);
 		}
-		outputLayer.adjust_weights(getLearningRate());
+		outputLayer.adjust_weights(getLearningRate(), lambda);
 
 		
 		return error; 

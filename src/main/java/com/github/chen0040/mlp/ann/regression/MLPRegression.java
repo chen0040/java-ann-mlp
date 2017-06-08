@@ -26,6 +26,9 @@ public class MLPRegression {
     private List<Integer> hiddenLayers;
 
     @Setter
+    private double lambda = 0.0; // L2 regularization for limiting the size of the weights
+
+    @Setter
     private LearningMethod learningMethod = LearningMethod.BackPropagation;
 
     @Setter
@@ -87,6 +90,7 @@ public class MLPRegression {
         mlp.setLearningMethod(learningMethod);
         mlp.setWeightUpdateMode(weightUpdateMode);
         mlp.setMaxLearningRate(maxLearningRate);
+        mlp.setLambda(lambda);
         mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);
 
         int dimension = batch.row(0).toArray().length;

@@ -20,11 +20,7 @@ public abstract class MLP extends MLPNet {
 
     private boolean adaptiveLearningRateEnabled = false;
 
-    @Setter
-    private double maxLearningRate = 1.0;
 
-    @Setter
-    private LearningMethod learningMethod = LearningMethod.BackPropagation;
 
     private boolean normalizeOutputs;
 
@@ -141,7 +137,7 @@ public abstract class MLP extends MLPNet {
                         }
                         propagated_output = outputLayer.forward_propagate(propagated_output);
 
-                        double[] dE_dyj = minus(target, propagated_output);
+                        double[] dE_dyj = minus(propagated_output, target);
 
                         for (int layerIndex = 0; layerIndex < backLayers.size(); ++layerIndex) {
 
@@ -202,7 +198,7 @@ public abstract class MLP extends MLPNet {
                                         layer.get(j).setLearningRateGain(i, gji);
                                     }
 
-                                    dwij = learningRate * gji * dE_dwji[index][j][i] / actualBatchSize;
+                                    dwij = gji * dE_dwji[index][j][i] / actualBatchSize;
                                 } else if(learningMethod == LearningMethod.ResilientBackPropagation){
                                     if(dE_dwji_prev != null) {
                                         double grad_prod = dE_dwji_prev[index][j][i] * dE_dwji[index][j][i];
@@ -219,18 +215,24 @@ public abstract class MLP extends MLPNet {
                                         layer.get(j).setLearningRateGain(-1, gji);
                                     }
 
-                                    dwij = learningRate * gji / 1000;
+                                    dwij = gji / 1000;
                                 }
 
+                                if(lambda > 0){
+                                    dwij -= lambda * wji;
+                                }
 
-                                layer.get(j).setWeight(i, wji + dwij);
+                                // gradient descend
+                                wji = wji - learningRate * dwij;
+
+                                layer.get(j).setWeight(i, wji);
                             }
                         }
 
                         for(int j=0; j < layer.size(); j++)
                         {
                             MLPNeuron neuron = layer.get(j);
-                            double sink_w0 = neuron.bias_weight;
+                            double wj0 = neuron.bias_weight;
                             double gji = layer.get(j).getLearningRateGain(-1);
 
 
@@ -253,7 +255,7 @@ public abstract class MLP extends MLPNet {
                                     layer.get(j).setLearningRateGain(-1, gji);
                                 }
 
-                                dwj0 = learningRate * gji * dE_dwj0[index][j] / actualBatchSize;
+                                dwj0 = gji * dE_dwj0[index][j] / actualBatchSize;
                             } else if(learningMethod == LearningMethod.ResilientBackPropagation){
                                 if(dE_dwji_prev != null) {
                                     double grad_prod = dE_dwj0_prev[index][j] * dE_dwj0[index][j];
@@ -270,11 +272,17 @@ public abstract class MLP extends MLPNet {
                                     layer.get(j).setLearningRateGain(-1, gji);
                                 }
 
-                                dwj0 = learningRate * gji / 1000;
+                                dwj0 = gji / 1000;
                             }
 
-                            sink_w0 += dwj0;
-                            neuron.bias_weight = sink_w0;
+                            if(lambda > 0){
+                                dwj0 -= lambda * wj0;
+                            }
+
+                            // gradient descend
+                            wj0 = wj0 - learningRate * dwj0;
+
+                            neuron.bias_weight = wj0;
                         }
                     }
 

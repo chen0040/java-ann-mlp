@@ -67,7 +67,7 @@ public class MLPLayer {
         return output;
 	}
 	
-	protected void adjust_weights(double learningRate)
+	protected void adjust_weights(double learningRate, double lambda)
 	{
         for(int j=0; j< neurons.size(); j++)
         {
@@ -80,9 +80,16 @@ public class MLPLayer {
                 double w_ji = neuron_j.getWeight(i);
 
                 double yi = neuron_j.inputs[i];
-                double dw = learningRate * dE_dzj * yi;
-                w_ji += dw;
-                neuron_j.setWeightDelta(i, dw);
+                double dw = dE_dzj * yi;
+
+                if(lambda > 0){
+                    dw += lambda * w_ji;
+                }
+
+                // gradient descend
+                w_ji = w_ji - learningRate * dw;
+
+                neuron_j.setWeightDelta(i, - learningRate * dw);
                 neuron_j.setWeight(i, w_ji);
             }
         }
@@ -90,10 +97,20 @@ public class MLPLayer {
         for(int j=0; j < neurons.size(); j++)
         {
             MLPNeuron neuron = neurons.get(j);
-            double sink_w0 = neuron.bias_weight;
+            double w_j0 = neuron.bias_weight;
             double dE_dzj = neuron.dE_dzj;
-            sink_w0 += learningRate * dE_dzj;
-            neuron.bias_weight = sink_w0;
+            double yi = 1;
+
+            double d_w0 = yi * dE_dzj;
+
+            if(lambda > 0){
+                d_w0 += lambda * w_j0;
+            }
+
+            // gradient descend
+            w_j0 = w_j0 - learningRate * d_w0;
+
+            neuron.bias_weight = w_j0;
         }
 	}
 

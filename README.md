@@ -10,6 +10,7 @@ Package provides java implementation of multi-layer perceptron neural network wi
 * Stochastic / Mini-batch / Steepest Descend Weight Update approaches
 * Back-propagation / Resilient Back-propagation (rprop) / rmsprop
 * Adaptive learning rate for individual weights
+* Weight limiting via L2-regularization
 * Both numerical and categorical inputs
 
 # Install
@@ -181,4 +182,12 @@ To prevent the learning rate to increase out of bounds, we can also set the max 
 ```java
 mlpClassifier.setMaxLearningRate(1.1);
 ```
+
+### Limiting the size of the weights
+
+The size of the weight in the mlp can be limited via the L2 regularization, which is controlled by the parameter lambda (0 by default):
+ 
+ ```java
+ mlpClassifier.setLambda(0.1); 
+ ```
 
