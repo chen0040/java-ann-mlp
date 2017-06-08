@@ -2,9 +2,9 @@ package com.github.chen0040.mlp.ann.regression;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.Identity;
-import com.github.chen0040.mlp.functions.ReLU;
 import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
@@ -26,13 +26,16 @@ public class MLPRegression {
     private List<Integer> hiddenLayers;
 
     @Setter
+    private LearningMethod learningMethod = LearningMethod.BackPropagation;
+
+    @Setter
     private int miniBatchSize = 50;
 
     @Setter
     private double maxLearningRate = 1.0;
 
     @Setter
-    protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
+    protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.OnlineStochasticGradientDescend;
 
     private boolean adaptiveLearningRateEnabled = false;
 
@@ -81,6 +84,7 @@ public class MLPRegression {
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
         mlp.setMiniBatchSize(miniBatchSize);
+        mlp.setLearningMethod(learningMethod);
         mlp.setWeightUpdateMode(weightUpdateMode);
         mlp.setMaxLearningRate(maxLearningRate);
         mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);

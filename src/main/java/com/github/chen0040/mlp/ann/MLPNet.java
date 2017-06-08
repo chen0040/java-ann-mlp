@@ -25,7 +25,7 @@ public class MLPNet {
 	protected double learningRate =0.25; //learning rate
 
 	@Setter
-	protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
+	protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.OnlineStochasticGradientDescend;
 
 	@Setter
 	protected int miniBatchSize = 50;

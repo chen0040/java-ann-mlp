@@ -2,6 +2,7 @@ package com.github.chen0040.mlp.ann;
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
 import com.github.chen0040.data.utils.transforms.Standardization;
+import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.RangeScaler;
 import lombok.Setter;
@@ -21,6 +22,9 @@ public abstract class MLP extends MLPNet {
 
     @Setter
     private double maxLearningRate = 1.0;
+
+    @Setter
+    private LearningMethod learningMethod = LearningMethod.BackPropagation;
 
     private boolean normalizeOutputs;
 
@@ -65,7 +69,7 @@ public abstract class MLP extends MLPNet {
 
         for(int epoch=0; epoch < training_epoches; ++epoch)
         {
-            if(weightUpdateMode == WeightUpdateMode.StochasticGradientDescend) {
+            if(weightUpdateMode == WeightUpdateMode.OnlineStochasticGradientDescend) {
                 for (int i = 0; i < batch.rowCount(); i++) {
                     DataRow row = batch.row(i);
                     if (isValidTrainingSample(row)) {
@@ -180,22 +184,45 @@ public abstract class MLP extends MLPNet {
                                 double wji = layer.get(j).getWeight(i);
                                 double gji = layer.get(j).getLearningRateGain(i);
 
-                                // adaptive learning rate
-                                if(adaptiveLearningRateEnabled && dE_dwji_prev != null){
-                                    double grad_prod = dE_dwji_prev[index][j][i] * dE_dwji[index][j][i];
-                                    if(grad_prod > 0) {
-                                        gji = gji + 0.05;
-                                    } else if(grad_prod < 0) {
-                                        gji = gji * 0.95;
+
+
+                                double dwij = 0;
+
+                                if(learningMethod == LearningMethod.BackPropagation){
+                                    // adaptive learning rate
+                                    if(adaptiveLearningRateEnabled && dE_dwji_prev != null){
+                                        double grad_prod = dE_dwji_prev[index][j][i] * dE_dwji[index][j][i];
+                                        if(grad_prod > 0) {
+                                            gji = gji + 0.05;
+                                        } else if(grad_prod < 0) {
+                                            gji = gji * 0.95;
+                                        }
+
+                                        gji = Math.min(maxLearningRate / learningRate, gji);
+                                        layer.get(j).setLearningRateGain(i, gji);
                                     }
 
-                                    gji = Math.min(maxLearningRate / learningRate, gji);
-                                    layer.get(j).setLearningRateGain(i, gji);
+                                    dwij = learningRate * gji * dE_dwji[index][j][i] / actualBatchSize;
+                                } else if(learningMethod == LearningMethod.ResilientBackPropagation){
+                                    if(dE_dwji_prev != null) {
+                                        double grad_prod = dE_dwji_prev[index][j][i] * dE_dwji[index][j][i];
+                                        if (grad_prod > 0) {
+                                            gji = gji * 1.2;
+                                        }
+                                        else if (grad_prod < 0) {
+                                            gji = gji * 0.5;
+                                        }
+
+                                        gji = Math.min(50 / learningRate, gji);
+                                        gji = Math.max(0.0000001 / learningRate, gji);
+
+                                        layer.get(j).setLearningRateGain(-1, gji);
+                                    }
+
+                                    dwij = learningRate * gji / 1000;
                                 }
 
 
-
-                                double dwij = learningRate * gji * dE_dwji[index][j][i] / actualBatchSize;
                                 layer.get(j).setWeight(i, wji + dwij);
                             }
                         }
@@ -206,21 +233,47 @@ public abstract class MLP extends MLPNet {
                             double sink_w0 = neuron.bias_weight;
                             double gji = layer.get(j).getLearningRateGain(-1);
 
-                            // adaptive learning rate
-                            if(adaptiveLearningRateEnabled && dE_dwj0_prev != null){
-                                double grad_prod = dE_dwj0_prev[index][j] * dE_dwj0[index][j];
-                                if(grad_prod > 0) {
-                                    gji = gji + 0.05;
-                                } else  if(grad_prod < 0) {
-                                    gji = gji * 0.95;
+
+
+                            double dwj0 = 0;
+
+                            if(learningMethod == LearningMethod.BackPropagation){
+                                // adaptive learning rate
+                                if(adaptiveLearningRateEnabled && dE_dwj0_prev != null){
+                                    double grad_prod = dE_dwj0_prev[index][j] * dE_dwj0[index][j];
+                                    if(grad_prod > 0) {
+                                        gji = gji + 0.05;
+                                    } else  if(grad_prod < 0) {
+                                        gji = gji * 0.95;
+                                    }
+
+                                    gji = Math.min(maxLearningRate / learningRate, gji);
+
+
+                                    layer.get(j).setLearningRateGain(-1, gji);
                                 }
 
-                                gji = Math.min(maxLearningRate / learningRate, gji);
+                                dwj0 = learningRate * gji * dE_dwj0[index][j] / actualBatchSize;
+                            } else if(learningMethod == LearningMethod.ResilientBackPropagation){
+                                if(dE_dwji_prev != null) {
+                                    double grad_prod = dE_dwj0_prev[index][j] * dE_dwj0[index][j];
+                                    if (grad_prod > 0) {
+                                        gji = gji * 1.2;
+                                    }
+                                    else if (grad_prod < 0) {
+                                        gji = gji * 0.5;
+                                    }
 
-                                layer.get(j).setLearningRateGain(-1, gji);
+                                    gji = Math.min(50 / learningRate, gji);
+                                    gji = Math.max(0.0000001 / learningRate, gji);
+
+                                    layer.get(j).setLearningRateGain(-1, gji);
+                                }
+
+                                dwj0 = learningRate * gji / 1000;
                             }
 
-                            sink_w0 += learningRate * gji * dE_dwj0[index][j] / actualBatchSize;
+                            sink_w0 += dwj0;
                             neuron.bias_weight = sink_w0;
                         }
                     }

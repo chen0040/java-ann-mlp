@@ -7,7 +7,8 @@ Package provides java implementation of multi-layer perceptron neural network wi
 # Features
 
 * Regression + Classification
-* Gradient Descend with Stochastic / Mini-batch / Steepest Descend Weight Update approaches
+* Stochastic / Mini-batch / Steepest Descend Weight Update approaches
+* Back-propagation / Resilient Back-propagation (rprop) / rmsprop
 * Adaptive learning rate for individual weights
 * Both numerical and categorical inputs
 
@@ -125,7 +126,7 @@ System.out.println("Prediction Accuracy: "+(correctnessCount * 100 / dataFrame.r
 
 ### How often to update weights
 
-By default the weight updating is done via stochastic gradient descend, to change it to steepest gradient descent:
+By default the weight updating is done via online stochastic gradient descend, to change it to steepest gradient descent:
 
 ```java
 mlpClassifier.setWeightUpdateMode(WeightUpdateMode.SteepestGradientDescend);
@@ -155,6 +156,14 @@ mlpClassifier.setMiniBatchSize(51);
 regression.setMiniBatchSize(51);
 ```
 
+### How much to update weight
+
+The default is by back-propagation, to change to other learning method such as rprop:
+
+```java
+mlpClassifier.setLearningMethod(LearningMethod.ResilientBackPropagation);
+```
+
 ### Adaptive learning rate
 
 The mlp can adapt the learning for individual weight, by default this is not enabled, to enable adaptive learning rate:
@@ -165,5 +174,11 @@ mlpClassifier.enableAdaptiveLearningRate(true);
 
 ```java
 regression.enableAdaptiveLearningRate(true);
+```
+
+To prevent the learning rate to increase out of bounds, we can also set the max learning rate (default is 1):
+
+```java
+mlpClassifier.setMaxLearningRate(1.1);
 ```
 

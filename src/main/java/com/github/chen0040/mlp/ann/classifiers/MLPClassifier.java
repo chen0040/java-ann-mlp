@@ -2,6 +2,7 @@ package com.github.chen0040.mlp.ann.classifiers;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.SoftMax;
@@ -32,7 +33,10 @@ public class MLPClassifier {
     public static final String HIDDEN_LAYER7 = "hiddenLayer7";
 
     @Setter
-    protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.StochasticGradientDescend;
+    protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.OnlineStochasticGradientDescend;
+
+    @Setter
+    private LearningMethod learningMethod = LearningMethod.BackPropagation;
 
     private boolean adaptiveLearningRateEnabled = false;
 
@@ -177,6 +181,7 @@ public class MLPClassifier {
 
         mlp = new MLPWithLabelOutput();
         mlp.setWeightUpdateMode(weightUpdateMode);
+        mlp.setLearningMethod(learningMethod);
         mlp.setMiniBatchSize(miniBatchSize);
         mlp.setMaxLearningRate(maxLearningRate);
         mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);
