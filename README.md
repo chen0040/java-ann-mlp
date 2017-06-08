@@ -10,7 +10,7 @@ Package provides java implementation of multi-layer perceptron neural network wi
 * Stochastic / Mini-batch / Steepest Descend Weight Update approaches
 * Back-propagation / Resilient Back-propagation (rprop) / rmsprop
 * Adaptive learning rate for individual weights
-* Weight limiting via L2-regularization
+* Weight limiting via weight penalties (L2-regularization) / weight constraints
 * Both numerical and categorical inputs
 
 # Install
@@ -204,12 +204,26 @@ mlpClassifier.setMaxLearningRate(1.1);
 
 ### Limiting the size of the weights
 
-The size of the weight in the mlp can be limited via the L2 regularization, which is controlled by the parameter lambda (0 by default):
+The size of weights in the network can be limited using either weight penalties or weight constraints
+
+The weight penalty can be achieved via L2 regularization. The effect of L2 weight cost is to prevent the network from using weights that it does not need. This can often improve generalization a lot
+ because it helps to stop the network from fitting the sampling error. It also makes a smoother model in which output changes more  slowly as the input changes
+ 
+To limit the size of the weight in the mlp via the L2 regularization (0 by default):
  
  ```java
- mlpClassifier.setLambda(0.1); 
+ mlpClassifier.setL2Penalty(0.1); 
  ```
  
- The effect of L2 weight cost is to prevent the network from using weights that it does not need. This can often improve generalization a lot
- because it helps to stop the network from fitting the sampling error.
+Alternative approach is to use weight constraints to limit the size of weight, the weight constraints works by enforcing the maximum allowed squared length on all weights of the network.
+
+To limit the size of the weight in the mlp via weight constraints (0 by default):
+
+```java
+mlpClassifier.setWeightConstraint(80);
+```
+
+ 
+ 
+ 
 

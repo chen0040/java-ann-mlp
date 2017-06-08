@@ -67,7 +67,7 @@ public class MLPLayer {
         return output;
 	}
 	
-	protected void adjust_weights(double learningRate, double lambda)
+	protected void adjust_weights(double learningRate, double lambda, double weightConstraint)
 	{
         for(int j=0; j< neurons.size(); j++)
         {
@@ -112,7 +112,17 @@ public class MLPLayer {
 
             neuron.bias_weight = w_j0;
         }
+
+        if(weightConstraint > 0) {
+            this.applyWeightConstraint(weightConstraint);
+        }
 	}
+
+	public void applyWeightConstraint(double weightConstraint){
+        for(int j=0; j < neurons.size(); ++j){
+            neurons.get(j).applyWeightConstraint(weightConstraint);
+        }
+    }
 
     private int dimension(){
         return neurons.get(0).inputDimension();

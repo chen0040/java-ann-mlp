@@ -20,14 +20,14 @@ public class MLPNeuron {
     private Map<Integer, Double> weights;
     private Map<Integer, Double> learningRateGains; // local gain on the learning rate;
 
-    private int dimension;
+    private int inputDimension;
 
     public void setInputs(double[] inputs){
        this.inputs = inputs;
     }
 
     public int inputDimension(){
-        return dimension;
+        return inputDimension;
     }
 
     public void copy(MLPNeuron rhs){
@@ -38,7 +38,7 @@ public class MLPNeuron {
         weights.clear();
         learningRateGains.clear();
 
-        this.dimension = rhs.dimension;
+        this.inputDimension = rhs.inputDimension;
 
         for(Integer i : rhs.weights.keySet()){
             weights.put(i, rhs.weights.get(i));
@@ -50,7 +50,7 @@ public class MLPNeuron {
 
     @Override
     public Object clone(){
-        MLPNeuron clone = new MLPNeuron(dimension);
+        MLPNeuron clone = new MLPNeuron(inputDimension);
         clone.copy(this);
         return clone;
     }
@@ -83,9 +83,9 @@ public class MLPNeuron {
 
 
 	
-	public MLPNeuron(int dimension)
+	public MLPNeuron(int inputDimension)
 	{
-	    this.dimension = dimension;
+	    this.inputDimension = inputDimension;
 		bias_weight =rand.nextDouble()-0.5;
 		bias =-1;
 
@@ -105,4 +105,17 @@ public class MLPNeuron {
        return sum;
     }
 
+
+    public void applyWeightConstraint(double weightConstraint) {
+        double squared_length = 0;
+        for(int i=0; i < inputDimension; ++i){
+            squared_length += getWeight(i) * getWeight(i);
+        }
+        if(squared_length > weightConstraint){
+            double ratio = Math.sqrt(weightConstraint / squared_length);
+            for(int i=0; i < inputDimension; ++i) {
+                setWeight(i, getWeight(i) * ratio);
+            }
+        }
+    }
 }

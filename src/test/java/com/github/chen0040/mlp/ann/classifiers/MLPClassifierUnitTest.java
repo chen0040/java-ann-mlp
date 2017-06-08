@@ -87,7 +87,43 @@ public class MLPClassifierUnitTest {
       MLPClassifier mlpClassifier = new MLPClassifier();
       mlpClassifier.setHiddenLayers(6); // one hidden layer, to set two or more hidden layer call mlpClassifier.setHiddenLayer([layer1NeuronCunt], [layer2NeuronCunt], ...);
       mlpClassifier.fit(dataFrame);
-      mlpClassifier.setLambda(0.01);
+      mlpClassifier.setL2Penalty(0.01);
+
+      int correctnessCount = 0;
+      for(int i = 0; i < dataFrame.rowCount(); ++i){
+         DataRow row = dataFrame.row(i);
+
+
+
+         String predicted_label = mlpClassifier.classify(row);
+         correctnessCount += (predicted_label.equals(row.categoricalTarget()) ? 1 : 0);
+
+         if(i < 10) {
+            System.out.println(row);
+            System.out.println("predicted: " + predicted_label + "\tactual: " + row.categoricalTarget());
+         }
+      }
+
+      System.out.println("Prediction Accuracy: "+(correctnessCount * 100 / dataFrame.rowCount()));
+   }
+
+   @Test
+   public void test_heartScale_weight_constraint() throws FileNotFoundException {
+      InputStream inputStream = FileUtils.getResource("heart_scale");
+
+      DataFrame dataFrame = DataQuery.libsvm().from(inputStream).build();
+
+      dataFrame.unlock();
+      for(int i=0; i < dataFrame.rowCount(); ++i){
+         DataRow row = dataFrame.row(i);
+         row.setCategoricalTargetCell("category-label", "" + row.target());
+      }
+      dataFrame.lock();
+
+      MLPClassifier mlpClassifier = new MLPClassifier();
+      mlpClassifier.setHiddenLayers(6); // one hidden layer, to set two or more hidden layer call mlpClassifier.setHiddenLayer([layer1NeuronCunt], [layer2NeuronCunt], ...);
+      mlpClassifier.fit(dataFrame);
+      mlpClassifier.setWeightConstraint(80);
 
       int correctnessCount = 0;
       for(int i = 0; i < dataFrame.rowCount(); ++i){
@@ -192,7 +228,43 @@ public class MLPClassifierUnitTest {
       MLPClassifier mlpClassifier = new MLPClassifier();
       mlpClassifier.setWeightUpdateMode(WeightUpdateMode.MiniBatchGradientDescend);
       mlpClassifier.setMiniBatchSize(20);
-      mlpClassifier.setLambda(0.001);
+      mlpClassifier.setL2Penalty(0.001);
+      mlpClassifier.setHiddenLayers(6); // one hidden layer, to set two or more hidden layer call mlpClassifier.setHiddenLayer([layer1NeuronCunt], [layer2NeuronCunt], ...);
+      mlpClassifier.fit(dataFrame);
+
+      int correctnessCount = 0;
+      for(int i = 0; i < dataFrame.rowCount(); ++i){
+         DataRow row = dataFrame.row(i);
+
+         String predicted_label = mlpClassifier.classify(row);
+         correctnessCount += (predicted_label.equals(row.categoricalTarget()) ? 1 : 0);
+
+         if(i < 10) {
+            System.out.println(row);
+            System.out.println("predicted: " + predicted_label + "\tactual: " + row.categoricalTarget());
+         }
+      }
+
+      System.out.println("Prediction Accuracy: "+(correctnessCount * 100 / dataFrame.rowCount()));
+   }
+
+   @Test
+   public void test_heartScale_mini_batch_descend_weight_constraint() throws FileNotFoundException {
+      InputStream inputStream = FileUtils.getResource("heart_scale");
+
+      DataFrame dataFrame = DataQuery.libsvm().from(inputStream).build();
+
+      dataFrame.unlock();
+      for(int i=0; i < dataFrame.rowCount(); ++i){
+         DataRow row = dataFrame.row(i);
+         row.setCategoricalTargetCell("category-label", "" + row.target());
+      }
+      dataFrame.lock();
+
+      MLPClassifier mlpClassifier = new MLPClassifier();
+      mlpClassifier.setWeightUpdateMode(WeightUpdateMode.MiniBatchGradientDescend);
+      mlpClassifier.setMiniBatchSize(20);
+      mlpClassifier.setWeightConstraint(80);
       mlpClassifier.setHiddenLayers(6); // one hidden layer, to set two or more hidden layer call mlpClassifier.setHiddenLayer([layer1NeuronCunt], [layer2NeuronCunt], ...);
       mlpClassifier.fit(dataFrame);
 

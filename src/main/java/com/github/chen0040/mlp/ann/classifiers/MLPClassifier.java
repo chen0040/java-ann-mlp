@@ -33,7 +33,10 @@ public class MLPClassifier {
     public static final String HIDDEN_LAYER7 = "hiddenLayer7";
 
     @Setter
-    private double lambda = 0.0; // L2 regularization for limiting the size of the weights
+    private double L2Penalty = 0.0; // L2 regularization for limiting the size of the weights
+
+    @Setter
+    protected double weightConstraint = 0;
 
     @Setter
     protected WeightUpdateMode weightUpdateMode = WeightUpdateMode.OnlineStochasticGradientDescend;
@@ -186,8 +189,9 @@ public class MLPClassifier {
         mlp.setWeightUpdateMode(weightUpdateMode);
         mlp.setLearningMethod(learningMethod);
         mlp.setMiniBatchSize(miniBatchSize);
+        mlp.setWeightConstraint(weightConstraint);
         mlp.setMaxLearningRate(maxLearningRate);
-        mlp.setLambda(lambda);
+        mlp.setL2Penalty(L2Penalty);
         mlp.enabledAdaptiveLearningRate(adaptiveLearningRateEnabled);
         mlp.classLabelsModel = () -> getClassLabels();
 

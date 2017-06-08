@@ -5,7 +5,6 @@ import com.github.chen0040.data.utils.transforms.Standardization;
 import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.RangeScaler;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -218,8 +217,8 @@ public abstract class MLP extends MLPNet {
                                     dwij = gji / 1000;
                                 }
 
-                                if(lambda > 0){
-                                    dwij += lambda * wji;
+                                if(L2Penalty > 0){
+                                    dwij += L2Penalty * wji;
                                 }
 
                                 // gradient descend
@@ -275,8 +274,8 @@ public abstract class MLP extends MLPNet {
                                 dwj0 = gji / 1000;
                             }
 
-                            if(lambda > 0){
-                                dwj0 += lambda * wj0;
+                            if(L2Penalty > 0){
+                                dwj0 += L2Penalty * wj0;
                             }
 
                             // gradient descend
@@ -284,17 +283,21 @@ public abstract class MLP extends MLPNet {
 
                             neuron.bias_weight = wj0;
                         }
+
+                        if(weightConstraint > 0) {
+                            layer.applyWeightConstraint(weightConstraint);
+                        }
                     }
+
+
 
                     dE_dwj0_prev = dE_dwj0;
                     dE_dwji_prev = dE_dwji;
                 }
-
-
             }
-
         }
     }
+
 
     public double[] transform(DataRow tuple){
 

@@ -23,7 +23,10 @@ public class MLPNet {
 	protected double maxLearningRate = 1.0;
 
 	@Setter
-	protected double lambda = 0.0; // L2 regularization for limiting the size of the weights
+	protected double L2Penalty = 0.0; // L2 regularization for limiting the size of the weights
+
+	@Setter
+	protected double weightConstraint = 0;
 
 	@Setter
 	protected LearningMethod learningMethod = LearningMethod.BackPropagation;
@@ -106,9 +109,9 @@ public class MLPNet {
 
 		//adjust weights
 		for(int i = 0; i < hiddenLayers.size(); ++i){
-			hiddenLayers.get(i).adjust_weights(getLearningRate(), lambda);
+			hiddenLayers.get(i).adjust_weights(getLearningRate(), L2Penalty, weightConstraint);
 		}
-		outputLayer.adjust_weights(getLearningRate(), lambda);
+		outputLayer.adjust_weights(getLearningRate(), L2Penalty, weightConstraint);
 
 		
 		return error; 
