@@ -5,6 +5,8 @@ import com.github.chen0040.data.utils.transforms.Standardization;
 import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.RangeScaler;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +15,13 @@ import java.util.List;
 /**
  * Created by xschen on 21/8/15.
  */
+@Getter
+@Setter
 public abstract class MLP extends MLPNet {
     private Standardization inputNormalization;
-    private RangeScaler outputNormalization;
+    private Standardization outputNormalization = new Standardization();
 
     private boolean adaptiveLearningRateEnabled = false;
-
-
 
     private boolean normalizeOutputs;
 
@@ -55,7 +57,7 @@ public abstract class MLP extends MLPNet {
                     targets.add(target);
                 }
             }
-            outputNormalization = new RangeScaler(targets);
+            outputNormalization.fit(targets);
         }
 
         double[][][] dE_dwji_prev = null;

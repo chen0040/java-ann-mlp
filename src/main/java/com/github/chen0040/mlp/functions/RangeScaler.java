@@ -1,6 +1,7 @@
 package com.github.chen0040.mlp.functions;
 
 
+import com.github.chen0040.data.utils.transforms.Standardization;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,13 +15,14 @@ import java.util.Map;
  */
 @Getter
 @Setter
-public class RangeScaler implements Cloneable {
+public class RangeScaler extends Standardization {
 
    private final Map<Integer, Double> minValue = new HashMap<>();
    private final Map<Integer, Double> maxValue = new HashMap<>();
 
 
-   public RangeScaler(List<double[]> targets) {
+   @Override
+   public void fit(List<double[]> targets) {
       for(int i = 0; i < targets.size(); ++i){
          double[] values = targets.get(i);
          for(int j=0; j < values.length; ++j) {
@@ -42,6 +44,7 @@ public class RangeScaler implements Cloneable {
    }
 
 
+   @Override
    public double[] standardize(double[] target) {
       double[] result = new double[target.length];
       for(int i=0; i < result.length; ++i){
@@ -51,6 +54,7 @@ public class RangeScaler implements Cloneable {
    }
 
 
+   @Override
    public double[] revert(double[] target) {
       double[] result = new double[target.length];
       for(int i=0; i < result.length; ++i){

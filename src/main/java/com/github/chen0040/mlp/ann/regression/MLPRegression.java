@@ -2,9 +2,11 @@ package com.github.chen0040.mlp.ann.regression;
 
 import com.github.chen0040.data.frame.DataFrame;
 import com.github.chen0040.data.frame.DataRow;
+import com.github.chen0040.data.utils.transforms.Standardization;
 import com.github.chen0040.mlp.enums.LearningMethod;
 import com.github.chen0040.mlp.enums.WeightUpdateMode;
 import com.github.chen0040.mlp.functions.Identity;
+import com.github.chen0040.mlp.functions.RangeScaler;
 import com.github.chen0040.mlp.functions.Sigmoid;
 import com.github.chen0040.mlp.functions.TransferFunction;
 import lombok.Getter;
@@ -61,6 +63,10 @@ public class MLPRegression {
     @Setter
     private double learningRate = 0.2;
 
+    @Getter
+    @Setter
+    private Standardization outputNormalization = new Standardization();
+
     public MLPRegression(){
         epoches = 1000;
 
@@ -89,6 +95,7 @@ public class MLPRegression {
 
         mlp = new MLPWithNumericOutput();
         mlp.setNormalizeOutputs(true);
+        mlp.setOutputNormalization(outputNormalization);
         mlp.setMiniBatchSize(miniBatchSize);
         mlp.setLearningMethod(learningMethod);
         mlp.setWeightUpdateMode(weightUpdateMode);
