@@ -42,7 +42,7 @@ public class MLPRegressionUnitTest {
       return r * Math.sin(theta);
    }
 
-  
+
 
    @Test
    public void test_simple_regression() {

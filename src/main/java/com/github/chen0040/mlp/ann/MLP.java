@@ -75,7 +75,7 @@ public abstract class MLP extends MLPNet {
 
                         double[] target = getTarget(row);
 
-                        if (outputNormalization != null) {
+                        if (normalizeOutputs) {
                             target = outputNormalization.standardize(target);
                         }
 
@@ -128,7 +128,7 @@ public abstract class MLP extends MLPNet {
 
                         double[] target = getTarget(row);
 
-                        if (outputNormalization != null) {
+                        if (normalizeOutputs) {
                             target = outputNormalization.standardize(target);
                         }
 
